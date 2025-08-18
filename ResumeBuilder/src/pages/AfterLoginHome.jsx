@@ -10,36 +10,136 @@ const Home = () => {
     templatesAvailable: 12547,
     mentorsOnline: 2834,
     jobsPosted: 15789,
-    interviewsScheduled: 3456
+    interviewsScheduled: 3456,
   });
 
   const [activities, setActivities] = useState([
-    { user: "Sarah M.", action: "created a new resume", time: "2 min ago", type: "create", location: "New York", avatar: "👩‍💼" },
-    { user: "Michael R.", action: "got hired at TechCorp", time: "5 min ago", type: "success", location: "San Francisco", avatar: "👨‍💻" },
-    { user: "Emma L.", action: "updated their skills", time: "8 min ago", type: "update", location: "London", avatar: "👩‍🎓" },
-    { user: "James K.", action: "downloaded resume as PDF", time: "12 min ago", type: "download", location: "Toronto", avatar: "👨‍🔬" },
-    { user: "Lisa P.", action: "completed skill assessment", time: "15 min ago", type: "assessment", location: "Sydney", avatar: "👩‍🏫" }
+    {
+      user: "Sarah M.",
+      action: "created a new resume",
+      time: "2 min ago",
+      type: "create",
+      location: "New York",
+      avatar: "👩‍💼",
+    },
+    {
+      user: "Michael R.",
+      action: "got hired at TechCorp",
+      time: "5 min ago",
+      type: "success",
+      location: "San Francisco",
+      avatar: "👨‍💻",
+    },
+    {
+      user: "Emma L.",
+      action: "updated their skills",
+      time: "8 min ago",
+      type: "update",
+      location: "London",
+      avatar: "👩‍🎓",
+    },
+    {
+      user: "James K.",
+      action: "downloaded resume as PDF",
+      time: "12 min ago",
+      type: "download",
+      location: "Toronto",
+      avatar: "👨‍🔬",
+    },
+    {
+      user: "Lisa P.",
+      action: "completed skill assessment",
+      time: "15 min ago",
+      type: "assessment",
+      location: "Sydney",
+      avatar: "👩‍🏫",
+    },
   ]);
 
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [onlineUsers, setOnlineUsers] = useState([]);
   const [notifications, setNotifications] = useState([]);
   const [trendingSkills, setTrendingSkills] = useState([
-    { skill: "AI/Machine Learning", growth: "+45%", demand: "Very High", color: "bg-gradient-to-r from-purple-500 to-pink-500" },
-    { skill: "React Development", growth: "+38%", demand: "High", color: "bg-gradient-to-r from-blue-500 to-cyan-500" },
-    { skill: "Data Analysis", growth: "+42%", demand: "Very High", color: "bg-gradient-to-r from-green-500 to-teal-500" },
-    { skill: "Cloud Computing", growth: "+35%", demand: "High", color: "bg-gradient-to-r from-orange-500 to-red-500" },
-    { skill: "UI/UX Design", growth: "+29%", demand: "Medium", color: "bg-gradient-to-r from-indigo-500 to-purple-500" },
-    { skill: "DevOps", growth: "+41%", demand: "Very High", color: "bg-gradient-to-r from-yellow-500 to-orange-500" }
+    {
+      skill: "AI/Machine Learning",
+      growth: "+45%",
+      demand: "Very High",
+      color: "bg-gradient-to-r from-purple-500 to-pink-500",
+    },
+    {
+      skill: "React Development",
+      growth: "+38%",
+      demand: "High",
+      color: "bg-gradient-to-r from-blue-500 to-cyan-500",
+    },
+    {
+      skill: "Data Analysis",
+      growth: "+42%",
+      demand: "Very High",
+      color: "bg-gradient-to-r from-green-500 to-teal-500",
+    },
+    {
+      skill: "Cloud Computing",
+      growth: "+35%",
+      demand: "High",
+      color: "bg-gradient-to-r from-orange-500 to-red-500",
+    },
+    {
+      skill: "UI/UX Design",
+      growth: "+29%",
+      demand: "Medium",
+      color: "bg-gradient-to-r from-indigo-500 to-purple-500",
+    },
+    {
+      skill: "DevOps",
+      growth: "+41%",
+      demand: "Very High",
+      color: "bg-gradient-to-r from-yellow-500 to-orange-500",
+    },
   ]);
 
   const [jobMarketData, setJobMarketData] = useState([
-    { company: "Google", openings: 1247, type: "Tech Giant", hiring: "Actively", logo: "🔍" },
-    { company: "Microsoft", openings: 985, type: "Tech Giant", hiring: "Actively", logo: "🪟" },
-    { company: "Amazon", openings: 2156, type: "E-commerce", hiring: "Rapidly", logo: "📦" },
-    { company: "Apple", openings: 734, type: "Hardware", hiring: "Selectively", logo: "🍎" },
-    { company: "Meta", openings: 678, type: "Social Media", hiring: "Actively", logo: "📘" },
-    { company: "Tesla", openings: 892, type: "Automotive", hiring: "Rapidly", logo: "⚡" }
+    {
+      company: "Google",
+      openings: 1247,
+      type: "Tech Giant",
+      hiring: "Actively",
+      logo: "🔍",
+    },
+    {
+      company: "Microsoft",
+      openings: 985,
+      type: "Tech Giant",
+      hiring: "Actively",
+      logo: "🪟",
+    },
+    {
+      company: "Amazon",
+      openings: 2156,
+      type: "E-commerce",
+      hiring: "Rapidly",
+      logo: "📦",
+    },
+    {
+      company: "Apple",
+      openings: 734,
+      type: "Hardware",
+      hiring: "Selectively",
+      logo: "🍎",
+    },
+    {
+      company: "Meta",
+      openings: 678,
+      type: "Social Media",
+      hiring: "Actively",
+      logo: "📘",
+    },
+    {
+      company: "Tesla",
+      openings: 892,
+      type: "Automotive",
+      hiring: "Rapidly",
+      logo: "⚡",
+    },
   ]);
 
   const [userProgress, setUserProgress] = useState({
@@ -48,22 +148,27 @@ const Home = () => {
     resumesCreated: 3,
     interviewsScheduled: 2,
     jobApplications: 12,
-    networkConnections: 45
+    networkConnections: 45,
   });
 
   // Simulate real-time updates
   useEffect(() => {
     const interval = setInterval(() => {
       // Update main stats
-      setStats(prev => ({
+      setStats((prev) => ({
         activeUsers: prev.activeUsers + Math.floor(Math.random() * 5),
         resumesCreated: prev.resumesCreated + Math.floor(Math.random() * 3),
         companiesHiring: prev.companiesHiring + Math.floor(Math.random() * 3),
-        successRate: Math.max(88, Math.min(99, prev.successRate + (Math.random() - 0.5) * 0.8)),
-        templatesAvailable: prev.templatesAvailable + Math.floor(Math.random() * 2),
+        successRate: Math.max(
+          88,
+          Math.min(99, prev.successRate + (Math.random() - 0.5) * 0.8)
+        ),
+        templatesAvailable:
+          prev.templatesAvailable + Math.floor(Math.random() * 2),
         mentorsOnline: prev.mentorsOnline + Math.floor(Math.random() * 4) - 2,
         jobsPosted: prev.jobsPosted + Math.floor(Math.random() * 5),
-        interviewsScheduled: prev.interviewsScheduled + Math.floor(Math.random() * 3)
+        interviewsScheduled:
+          prev.interviewsScheduled + Math.floor(Math.random() * 3),
       }));
 
       // Update current time
@@ -72,16 +177,59 @@ const Home = () => {
       // Add new activity occasionally
       if (Math.random() > 0.6) {
         const newActivities = [
-          { user: "Alex Chen", action: "landed a job at Google", time: "just now", type: "success", location: "California", avatar: "👨‍💻" },
-          { user: "Maria Garcia", action: "completed AI course", time: "just now", type: "assessment", location: "Madrid", avatar: "👩‍🎓" },
-          { user: "David Kim", action: "updated portfolio", time: "just now", type: "update", location: "Seoul", avatar: "👨‍🎨" },
-          { user: "Sophie Brown", action: "got interview invite", time: "just now", type: "success", location: "London", avatar: "👩‍💼" },
-          { user: "Carlos Rodriguez", action: "created new resume", time: "just now", type: "create", location: "Mexico City", avatar: "👨‍🔬" },
-          { user: "Anna Petrov", action: "skill assessment passed", time: "just now", type: "assessment", location: "Moscow", avatar: "👩‍🏫" }
+          {
+            user: "Alex Chen",
+            action: "landed a job at Google",
+            time: "just now",
+            type: "success",
+            location: "California",
+            avatar: "👨‍💻",
+          },
+          {
+            user: "Maria Garcia",
+            action: "completed AI course",
+            time: "just now",
+            type: "assessment",
+            location: "Madrid",
+            avatar: "👩‍🎓",
+          },
+          {
+            user: "David Kim",
+            action: "updated portfolio",
+            time: "just now",
+            type: "update",
+            location: "Seoul",
+            avatar: "👨‍🎨",
+          },
+          {
+            user: "Sophie Brown",
+            action: "got interview invite",
+            time: "just now",
+            type: "success",
+            location: "London",
+            avatar: "👩‍💼",
+          },
+          {
+            user: "Carlos Rodriguez",
+            action: "created new resume",
+            time: "just now",
+            type: "create",
+            location: "Mexico City",
+            avatar: "👨‍🔬",
+          },
+          {
+            user: "Anna Petrov",
+            action: "skill assessment passed",
+            time: "just now",
+            type: "assessment",
+            location: "Moscow",
+            avatar: "👩‍🏫",
+          },
         ];
-        const randomActivity = newActivities[Math.floor(Math.random() * newActivities.length)];
-        
-        setActivities(prev => [randomActivity, ...prev.slice(0, 9)]);
+        const randomActivity =
+          newActivities[Math.floor(Math.random() * newActivities.length)];
+
+        setActivities((prev) => [randomActivity, ...prev.slice(0, 9)]);
       }
 
       // Update notifications occasionally
@@ -91,23 +239,31 @@ const Home = () => {
           "🔥 AI skills are trending up 45% this week!",
           "⭐ New resume template just released!",
           "🚀 Interview success rate increased to 94%!",
-          "💼 Top companies are hiring for remote positions!"
+          "💼 Top companies are hiring for remote positions!",
         ];
-        const randomNotification = newNotifications[Math.floor(Math.random() * newNotifications.length)];
-        setNotifications(prev => [randomNotification, ...prev.slice(0, 2)]);
+        const randomNotification =
+          newNotifications[Math.floor(Math.random() * newNotifications.length)];
+        setNotifications((prev) => [randomNotification, ...prev.slice(0, 2)]);
       }
 
       // Update trending skills growth
-      setTrendingSkills(prev => prev.map(skill => ({
-        ...skill,
-        growth: `+${(parseInt(skill.growth.replace('%', '').replace('+', '')) + Math.floor(Math.random() * 3 - 1))}%`
-      })));
+      setTrendingSkills((prev) =>
+        prev.map((skill) => ({
+          ...skill,
+          growth: `+${
+            parseInt(skill.growth.replace("%", "").replace("+", "")) +
+            Math.floor(Math.random() * 3 - 1)
+          }%`,
+        }))
+      );
 
       // Update job market data
-      setJobMarketData(prev => prev.map(company => ({
-        ...company,
-        openings: company.openings + Math.floor(Math.random() * 10 - 5)
-      })));
+      setJobMarketData((prev) =>
+        prev.map((company) => ({
+          ...company,
+          openings: company.openings + Math.floor(Math.random() * 10 - 5),
+        }))
+      );
     }, 4000);
 
     return () => clearInterval(interval);
@@ -128,7 +284,7 @@ const Home = () => {
       icon: "🤖",
       color: "from-purple-500 to-pink-500",
       stats: `${stats.templatesAvailable.toLocaleString()}+ templates`,
-      badge: "Most Popular"
+      badge: "Most Popular",
     },
     {
       title: "Real-Time Skill Assessment",
@@ -136,7 +292,7 @@ const Home = () => {
       icon: "⚡",
       color: "from-blue-500 to-cyan-500",
       stats: "98.7% accuracy",
-      badge: "AI Powered"
+      badge: "AI Powered",
     },
     {
       title: "Live Collaboration Hub",
@@ -144,7 +300,7 @@ const Home = () => {
       icon: "👥",
       color: "from-green-500 to-teal-500",
       stats: `${stats.mentorsOnline.toLocaleString()}+ mentors online`,
-      badge: "Live Now"
+      badge: "Live Now",
     },
     {
       title: "Smart Analytics Dashboard",
@@ -152,7 +308,7 @@ const Home = () => {
       icon: "📊",
       color: "from-orange-500 to-red-500",
       stats: "Real-time insights",
-      badge: "Advanced"
+      badge: "Advanced",
     },
     {
       title: "Job Market Intelligence",
@@ -160,7 +316,7 @@ const Home = () => {
       icon: "🎯",
       color: "from-indigo-500 to-purple-500",
       stats: `${stats.jobsPosted.toLocaleString()}+ jobs tracked`,
-      badge: "Exclusive"
+      badge: "Exclusive",
     },
     {
       title: "Interview Preparation",
@@ -168,8 +324,8 @@ const Home = () => {
       icon: "🎤",
       color: "from-yellow-500 to-orange-500",
       stats: `${stats.interviewsScheduled.toLocaleString()}+ interviews scheduled`,
-      badge: "Success Boost"
-    }
+      badge: "Success Boost",
+    },
   ];
 
   const getActivityIcon = (type) => {
@@ -178,7 +334,7 @@ const Home = () => {
       success: "🎉",
       update: "🔄",
       download: "📄",
-      assessment: "🎯"
+      assessment: "🎯",
     };
     return icons[type] || "•";
   };
@@ -186,11 +342,14 @@ const Home = () => {
   const StatCard = ({ label, value, suffix = "" }) => (
     <div className="bg-card rounded-xl p-6 shadow-soft hover:shadow-medium transition-all duration-300 animate-scale-in">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-muted-foreground text-sm font-medium">{label}</span>
+        <span className="text-muted-foreground text-sm font-medium">
+          {label}
+        </span>
         <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
       </div>
       <div className="text-2xl font-bold text-foreground">
-        {typeof value === 'number' ? Math.floor(value).toLocaleString() : value}{suffix}
+        {typeof value === "number" ? Math.floor(value).toLocaleString() : value}
+        {suffix}
       </div>
     </div>
   );
@@ -209,10 +368,11 @@ const Home = () => {
               </span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-              Join thousands of professionals using our AI-powered platform to create stunning resumes, 
-              assess skills, and land their dream jobs with real-time collaboration and insights.
+              Join thousands of professionals using our AI-powered platform to
+              create stunning resumes, assess skills, and land their dream jobs
+              with real-time collaboration and insights.
             </p>
-            
+
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
               <Link
@@ -221,9 +381,15 @@ const Home = () => {
               >
                 Start Building Now
               </Link>
-              <button className="bg-card text-foreground border border-border px-8 py-4 rounded-xl font-semibold text-lg shadow-soft hover:shadow-medium transform hover:scale-105 transition-all duration-300">
-                Watch Demo
-              </button>
+              <a
+                href="https://youtu.be/9ScqP1qmxFo?si=ul3yLciA0hGyDQ2q"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <button className="bg-card text-foreground border border-border px-8 py-4 rounded-xl font-semibold text-lg shadow-soft hover:shadow-medium transform hover:scale-105 transition-all duration-300">
+                  Watch Demo
+                </button>
+              </a>
             </div>
           </div>
 
@@ -232,7 +398,11 @@ const Home = () => {
             <StatCard label="Active Users" value={stats.activeUsers} />
             <StatCard label="Resumes Created" value={stats.resumesCreated} />
             <StatCard label="Companies Hiring" value={stats.companiesHiring} />
-            <StatCard label="Success Rate" value={stats.successRate.toFixed(1)} suffix="%" />
+            <StatCard
+              label="Success Rate"
+              value={stats.successRate.toFixed(1)}
+              suffix="%"
+            />
           </div>
         </div>
       </section>
@@ -244,7 +414,7 @@ const Home = () => {
             Powerful Features for Modern Professionals
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Everything you need to stand out in today's competitive job market, 
+            Everything you need to stand out in today's competitive job market,
             powered by cutting-edge AI and real-time collaboration.
           </p>
         </div>
@@ -256,7 +426,9 @@ const Home = () => {
               className="group bg-card rounded-2xl p-8 shadow-soft hover:shadow-strong transition-all duration-500 transform hover:-translate-y-2 animate-scale-in cursor-pointer"
               style={{ animationDelay: `${idx * 100}ms` }}
             >
-              <div className={`w-16 h-16 bg-gradient-to-br ${feature.color} rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform duration-300`}>
+              <div
+                className={`w-16 h-16 bg-gradient-to-br ${feature.color} rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform duration-300`}
+              >
                 {feature.icon}
               </div>
               <h3 className="text-xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
@@ -300,11 +472,13 @@ const Home = () => {
                 {getGreeting()}, See What's Happening Live
               </h3>
               <p className="text-lg text-muted-foreground">
-                Join a thriving community of {stats.activeUsers.toLocaleString()}+ professionals achieving their career goals 
-                every day. Watch real-time updates from users just like you across the globe.
+                Join a thriving community of{" "}
+                {stats.activeUsers.toLocaleString()}+ professionals achieving
+                their career goals every day. Watch real-time updates from users
+                just like you across the globe.
               </p>
             </div>
-            
+
             <div className="bg-card rounded-2xl p-6 shadow-medium animate-slide-up">
               <div className="flex items-center justify-between mb-6">
                 <h4 className="text-lg font-semibold text-foreground flex items-center gap-2">
@@ -313,10 +487,12 @@ const Home = () => {
                 </h4>
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
-                  <span className="text-sm text-success font-medium">Live - {currentTime.toLocaleTimeString()}</span>
+                  <span className="text-sm text-success font-medium">
+                    Live - {currentTime.toLocaleTimeString()}
+                  </span>
                 </div>
               </div>
-              
+
               <div className="space-y-4 max-h-96 overflow-y-auto">
                 {activities.map((activity, idx) => (
                   <div
@@ -327,13 +503,23 @@ const Home = () => {
                     <div className="text-2xl">{activity.avatar}</div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-lg">{getActivityIcon(activity.type)}</span>
-                        <span className="font-semibold text-foreground">{activity.user}</span>
-                        <span className="text-xs bg-muted text-muted-foreground px-2 py-1 rounded-full">{activity.location}</span>
+                        <span className="text-lg">
+                          {getActivityIcon(activity.type)}
+                        </span>
+                        <span className="font-semibold text-foreground">
+                          {activity.user}
+                        </span>
+                        <span className="text-xs bg-muted text-muted-foreground px-2 py-1 rounded-full">
+                          {activity.location}
+                        </span>
                       </div>
-                      <p className="text-sm text-muted-foreground mb-2">{activity.action}</p>
+                      <p className="text-sm text-muted-foreground mb-2">
+                        {activity.action}
+                      </p>
                       <div className="flex items-center justify-between">
-                        <span className="text-xs text-muted-foreground">{activity.time}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {activity.time}
+                        </span>
                         <div className="flex items-center gap-1">
                           <div className="w-1 h-1 bg-success rounded-full animate-pulse"></div>
                           <span className="text-xs text-success">Active</span>
@@ -356,23 +542,39 @@ const Home = () => {
               </h4>
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Templates Used</span>
-                  <span className="font-bold text-primary">{stats.templatesAvailable.toLocaleString()}</span>
+                  <span className="text-sm text-muted-foreground">
+                    Templates Used
+                  </span>
+                  <span className="font-bold text-primary">
+                    {stats.templatesAvailable.toLocaleString()}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Mentors Online</span>
+                  <span className="text-sm text-muted-foreground">
+                    Mentors Online
+                  </span>
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                    <span className="font-bold text-green-600">{stats.mentorsOnline.toLocaleString()}</span>
+                    <span className="font-bold text-green-600">
+                      {stats.mentorsOnline.toLocaleString()}
+                    </span>
                   </div>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Jobs Posted Today</span>
-                  <span className="font-bold text-blue-600">{stats.jobsPosted.toLocaleString()}</span>
+                  <span className="text-sm text-muted-foreground">
+                    Jobs Posted Today
+                  </span>
+                  <span className="font-bold text-blue-600">
+                    {stats.jobsPosted.toLocaleString()}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Interviews This Week</span>
-                  <span className="font-bold text-purple-600">{stats.interviewsScheduled.toLocaleString()}</span>
+                  <span className="text-sm text-muted-foreground">
+                    Interviews This Week
+                  </span>
+                  <span className="font-bold text-purple-600">
+                    {stats.interviewsScheduled.toLocaleString()}
+                  </span>
                 </div>
               </div>
             </div>
@@ -386,15 +588,27 @@ const Home = () => {
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="text-sm text-green-700 dark:text-green-300 font-medium">{stats.successRate.toFixed(1)}% Interview Success Rate</span>
+                  <span className="text-sm text-green-700 dark:text-green-300 font-medium">
+                    {stats.successRate.toFixed(1)}% Interview Success Rate
+                  </span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
-                  <span className="text-sm text-green-700 dark:text-green-300 font-medium">97.2% User Satisfaction</span>
+                  <div
+                    className="w-3 h-3 bg-green-500 rounded-full animate-pulse"
+                    style={{ animationDelay: "0.5s" }}
+                  ></div>
+                  <span className="text-sm text-green-700 dark:text-green-300 font-medium">
+                    97.2% User Satisfaction
+                  </span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
-                  <span className="text-sm text-green-700 dark:text-green-300 font-medium">4.9⭐ Average Rating</span>
+                  <div
+                    className="w-3 h-3 bg-green-500 rounded-full animate-pulse"
+                    style={{ animationDelay: "1s" }}
+                  ></div>
+                  <span className="text-sm text-green-700 dark:text-green-300 font-medium">
+                    4.9⭐ Average Rating
+                  </span>
                 </div>
               </div>
             </div>
@@ -411,8 +625,9 @@ const Home = () => {
               Trending Skills & Market Intelligence
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Stay ahead of the curve with real-time skill demand data and market insights 
-              powered by AI analysis of millions of job postings.
+              Stay ahead of the curve with real-time skill demand data and
+              market insights powered by AI analysis of millions of job
+              postings.
             </p>
           </div>
 
@@ -432,7 +647,9 @@ const Home = () => {
                       style={{ animationDelay: `${idx * 150}ms` }}
                     >
                       <div className="flex items-center justify-between mb-3">
-                        <div className={`w-4 h-4 rounded-full ${skill.color}`}></div>
+                        <div
+                          className={`w-4 h-4 rounded-full ${skill.color}`}
+                        ></div>
                         <span className="text-sm font-bold text-green-600 bg-green-100 dark:bg-green-900/30 px-2 py-1 rounded-full">
                           {skill.growth}
                         </span>
@@ -441,12 +658,18 @@ const Home = () => {
                         {skill.skill}
                       </h4>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs text-muted-foreground">Demand:</span>
-                        <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
-                          skill.demand === 'Very High' ? 'bg-red-100 text-red-700 dark:bg-red-900/30' :
-                          skill.demand === 'High' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30' :
-                          'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30'
-                        }`}>
+                        <span className="text-xs text-muted-foreground">
+                          Demand:
+                        </span>
+                        <span
+                          className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                            skill.demand === "Very High"
+                              ? "bg-red-100 text-red-700 dark:bg-red-900/30"
+                              : skill.demand === "High"
+                              ? "bg-orange-100 text-orange-700 dark:bg-orange-900/30"
+                              : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30"
+                          }`}
+                        >
                           {skill.demand}
                         </span>
                       </div>
@@ -465,16 +688,28 @@ const Home = () => {
                 </h3>
                 <div className="space-y-4">
                   <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                    <div className="text-sm text-blue-600 font-medium">Most In-Demand</div>
-                    <div className="text-lg font-bold text-blue-800 dark:text-blue-200">AI & Machine Learning</div>
+                    <div className="text-sm text-blue-600 font-medium">
+                      Most In-Demand
+                    </div>
+                    <div className="text-lg font-bold text-blue-800 dark:text-blue-200">
+                      AI & Machine Learning
+                    </div>
                   </div>
                   <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                    <div className="text-sm text-green-600 font-medium">Highest Growth</div>
-                    <div className="text-lg font-bold text-green-800 dark:text-green-200">Data Analysis</div>
+                    <div className="text-sm text-green-600 font-medium">
+                      Highest Growth
+                    </div>
+                    <div className="text-lg font-bold text-green-800 dark:text-green-200">
+                      Data Analysis
+                    </div>
                   </div>
                   <div className="p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-                    <div className="text-sm text-purple-600 font-medium">Emerging Field</div>
-                    <div className="text-lg font-bold text-purple-800 dark:text-purple-200">DevOps Engineering</div>
+                    <div className="text-sm text-purple-600 font-medium">
+                      Emerging Field
+                    </div>
+                    <div className="text-lg font-bold text-purple-800 dark:text-purple-200">
+                      DevOps Engineering
+                    </div>
                   </div>
                 </div>
               </div>
@@ -485,7 +720,8 @@ const Home = () => {
                   Quick Action
                 </h3>
                 <p className="text-sm text-orange-700 dark:text-orange-300 mb-4">
-                  Start learning AI skills now and increase your job prospects by 45%!
+                  Start learning AI skills now and increase your job prospects
+                  by 45%!
                 </p>
                 <button className="w-full bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-lg font-semibold transform hover:scale-105 transition-all duration-200">
                   Start AI Assessment
@@ -504,8 +740,8 @@ const Home = () => {
             Live Job Market Intelligence
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Real-time insights from top companies actively hiring. Updated every minute 
-            with fresh opportunities and hiring trends.
+            Real-time insights from top companies actively hiring. Updated every
+            minute with fresh opportunities and hiring trends.
           </p>
         </div>
 
@@ -523,22 +759,32 @@ const Home = () => {
                     <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors">
                       {company.company}
                     </h3>
-                    <p className="text-sm text-muted-foreground">{company.type}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {company.type}
+                    </p>
                   </div>
                 </div>
-                <div className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                  company.hiring === 'Rapidly' ? 'bg-red-100 text-red-700 dark:bg-red-900/30' :
-                  company.hiring === 'Actively' ? 'bg-green-100 text-green-700 dark:bg-green-900/30' :
-                  'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30'
-                }`}>
+                <div
+                  className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                    company.hiring === "Rapidly"
+                      ? "bg-red-100 text-red-700 dark:bg-red-900/30"
+                      : company.hiring === "Actively"
+                      ? "bg-green-100 text-green-700 dark:bg-green-900/30"
+                      : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30"
+                  }`}
+                >
                   {company.hiring}
                 </div>
               </div>
-              
+
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="text-2xl font-bold text-primary">{company.openings.toLocaleString()}</span>
-                  <span className="text-muted-foreground ml-2">open positions</span>
+                  <span className="text-2xl font-bold text-primary">
+                    {company.openings.toLocaleString()}
+                  </span>
+                  <span className="text-muted-foreground ml-2">
+                    open positions
+                  </span>
                 </div>
                 <button className="bg-primary text-primary-foreground px-4 py-2 rounded-lg font-semibold hover:bg-primary/90 transform hover:scale-105 transition-all duration-200">
                   View Jobs
@@ -556,17 +802,18 @@ const Home = () => {
             Ready to Transform Your Career?
           </h3>
           <p className="text-xl text-black/80 mb-8 max-w-2xl mx-auto">
-            Join thousands of professionals who have already accelerated their careers 
-            with our AI-powered platform and real-time collaboration tools.
+            Join thousands of professionals who have already accelerated their
+            careers with our AI-powered platform and real-time collaboration
+            tools.
           </p>
-          
+
           <Link
             to="/resume-builder"
             className="inline-block bg-white text-primary px-10 py-4 rounded-xl font-bold text-lg shadow-strong hover:shadow-medium transform hover:scale-105 transition-all duration-300 animate-float"
           >
             Get Started Free Today
           </Link>
-          
+
           <p className="text-black/60 text-sm mt-4">
             No credit card required • Start building in under 60 seconds
           </p>

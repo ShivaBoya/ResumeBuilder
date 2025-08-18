@@ -1,63 +1,72 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { BASE_URL } from "../utils/contants";
 
 const Login = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
-  const [status, setStatus] = useState(""); // 'success' | 'error'
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-const handleLogin = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  setMessage("");
-  setStatus("");
 
-  try {
-    const res = await axios.post(BASE_URL+"/users/login", formData);
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-    setMessage(res.data.message || "Login successful!");
-    setStatus("success");
+    try {
+      const res = await axios.post(`${BASE_URL}/users/login`, formData);
 
-    localStorage.setItem("accessToken", res.data.accessToken);
-    localStorage.setItem("refreshToken", res.data.refreshToken);
-    localStorage.setItem("user", JSON.stringify(res.data.user));
+      // ✅ Success toast
+      toast.success(res.data.message || "Login successful!", {
+        position: "top-center",
+        autoClose: 3000,
+        theme: "colored",
+      });
 
-    // Trigger storage event so App updates login state
-    window.dispatchEvent(new Event("storage"));
+      // Store tokens and user info
+      localStorage.setItem("accessToken", res.data.accessToken);
+      localStorage.setItem("refreshToken", res.data.refreshToken);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
 
-    navigate("/", { replace: true });
-  } catch (err) {
-    setMessage(err.response?.data?.message || "Login failed! Please try again.");
-    setStatus("error");
-  } finally {
-    setLoading(false);
-  }
-};
+      // Update global state
+      window.dispatchEvent(new Event("storage"));
 
-  const inputBaseClasses = `w-full border rounded-lg p-3 mb-4 focus:outline-none transition-all duration-200`;
+      // Redirect after toast delay
+      setTimeout(() => navigate("/", { replace: true }), 3000);
+    } catch (err) {
+      // ✅ Error toast
+      toast.error(err.response?.data?.message || "Login failed! Please try again.", {
+        position: "top-center",
+        autoClose: 3000,
+        theme: "colored",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const inputClasses =
+    "w-full border rounded-lg p-3 mb-4 focus:outline-none transition-all duration-200";
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 px-4">
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 px-4">
+      {/* ✅ Toast container */}
+      <ToastContainer />
+
       <form
         onSubmit={handleLogin}
-        className={`bg-white shadow-lg rounded-xl p-8 w-full max-w-md transition-all duration-300
-          ${loading ? "opacity-75 scale-[0.98]" : "opacity-100 scale-100"}`}
-        aria-label="Login Form"
+        className={`bg-white shadow-xl rounded-2xl p-8 w-full max-w-md transition-all duration-300 ${
+          loading ? "opacity-75 scale-[0.98]" : "opacity-100 scale-100"
+        }`}
       >
-        <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Login</h2>
+        <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Welcome Back!</h2>
 
-        <label htmlFor="email" className="sr-only">
-          Email
-        </label>
         <input
-          id="email"
           type="email"
           name="email"
           placeholder="Email"
@@ -65,19 +74,10 @@ const handleLogin = async (e) => {
           onChange={handleChange}
           required
           autoComplete="email"
-          className={`${inputBaseClasses} ${
-            status === "error"
-              ? "border-red-400 focus:border-red-500"
-              : "border-gray-300 focus:border-blue-500"
-          }`}
-          aria-invalid={status === "error" ? "true" : "false"}
+          className={`${inputClasses} border-gray-300 focus:border-green-500`}
         />
 
-        <label htmlFor="password" className="sr-only">
-          Password
-        </label>
         <input
-          id="password"
           type="password"
           name="password"
           placeholder="Password"
@@ -85,40 +85,28 @@ const handleLogin = async (e) => {
           onChange={handleChange}
           required
           autoComplete="current-password"
-          className={`${inputBaseClasses} ${
-            status === "error"
-              ? "border-red-400 focus:border-red-500"
-              : "border-gray-300 focus:border-blue-500"
-          }`}
-          aria-invalid={status === "error" ? "true" : "false"}
+          className={`${inputClasses} border-gray-300 focus:border-green-500`}
         />
 
         <button
           type="submit"
           disabled={loading}
-          className={`w-full p-3 rounded-lg transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-opacity-50 ${
-            loading
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-green-600 hover:bg-green-700 text-white"
+          className={`w-full p-3 rounded-lg font-semibold transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-opacity-50 ${
+            loading ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700 text-white"
           }`}
-          aria-busy={loading}
-          aria-live="polite"
         >
           {loading ? "Logging in..." : "Login"}
         </button>
 
-        {message && (
-          <p
-            role={status === "error" ? "alert" : undefined}
-            className={`mt-4 text-center text-sm transition-all duration-300 ${
-              status === "success"
-                ? "text-green-600 font-medium"
-                : "text-red-600 font-medium"
-            }`}
+        <div className="mt-6 text-center">
+          <span className="text-gray-600 text-sm">Don't have an account? </span>
+          <Link
+            to="/signup"
+            className="text-green-600 hover:text-green-700 font-semibold transition-colors duration-200"
           >
-            {message}
-          </p>
-        )}
+            Sign Up
+          </Link>
+        </div>
       </form>
     </div>
   );
