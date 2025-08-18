@@ -11,18 +11,18 @@ const blackListTokenModel = require("../models/blackListTokenModel");
 const authMiddleware = require("../middlewares/authmiddleware");
 
 const UserRouter = express.Router();
-
-// ========== SIGNUP ==========
 UserRouter.post("/signup", async (req, res) => {
   try {
-    const { username, email, password, role } = req.body;
+    const { name, username, email, password, phone, role } = req.body;
 
-    if (!email || !password || !username) {
-      return res
-        .status(400)
-        .json({ message: "Email, Username, and Password are required" });
+    // ✅ Validation
+    if (!name || !username || !email || !password) {
+      return res.status(400).json({
+        message: "Name, Username, Email, and Password are required",
+      });
     }
 
+    // Check if user already exists
     const existingUser = await UserModel.findOne({ email });
     if (existingUser) {
       return res
@@ -30,18 +30,36 @@ UserRouter.post("/signup", async (req, res) => {
         .json({ message: "User already exists with this email" });
     }
 
-    bcrypt.hash(password, saltRounds, async function (err, hash) {
-      if (err) {
-        return res.status(500).json({ message: "Error hashing password" });
-      }
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-      await UserModel.create({ username, email, password: hash, role });
-      res.status(201).json({ message: "Signup Success" });
+    // Create user
+    const newUser = await UserModel.create({
+      name,
+      username,
+      email,
+      password: hashedPassword,
+      phone,
+      role,
+    });
+
+    res.status(201).json({
+      message: "Signup Success",
+      user: {
+        id: newUser._id,
+        name: newUser.name,
+        username: newUser.username,
+        email: newUser.email,
+        phone: newUser.phone,
+        role: newUser.role,
+      },
     });
   } catch (err) {
+    console.error("Signup Error:", err.message);
     res.status(500).json({ message: "Something went wrong" });
   }
 });
+
 
 UserRouter.post("/login", async (req, res) => {
   try {

@@ -219,8 +219,9 @@ function NavBarAfterLogin({ onLogout }) {
           <div className="px-4 py-2 border-t border-blue-700">
             <span className="block mb-1">Welcome, {username}!</span>
             <button
+              type="button"
               onClick={() => navigate("/profile")}
-              className="w-full text-left px-2 py-1 hover:bg-blue-800 rounded"
+              className="w-full text-left px-4 py-2 hover:bg-blue-700 rounded transition-colors duration-200"
             >
               Profile
             </button>

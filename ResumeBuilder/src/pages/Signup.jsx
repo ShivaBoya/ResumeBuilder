@@ -8,8 +8,10 @@ import "react-toastify/dist/ReactToastify.css";
 const Signup = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
+    name: "",
     username: "",
     email: "",
+    phone: "",
     password: "",
   });
 
@@ -67,8 +69,18 @@ const Signup = () => {
 
         <input
           type="text"
-          name="username"
+          name="name"
           placeholder="Full Name"
+          value={formData.name}
+          onChange={handleChange}
+          required
+          className={`${inputClasses} border-gray-300 focus:border-green-500`}
+        />
+
+        <input
+          type="text"
+          name="username"
+          placeholder="Username"
           value={formData.username}
           onChange={handleChange}
           required
@@ -83,6 +95,16 @@ const Signup = () => {
           onChange={handleChange}
           required
           autoComplete="email"
+          className={`${inputClasses} border-gray-300 focus:border-green-500`}
+        />
+
+        <input
+          type="tel"
+          name="phone"
+          placeholder="Phone Number"
+          value={formData.phone}
+          onChange={handleChange}
+          required
           className={`${inputClasses} border-gray-300 focus:border-green-500`}
         />
 

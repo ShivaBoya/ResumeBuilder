@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
 const Home = () => {
+  const navigate = useNavigate();
   const [stats, setStats] = useState({
     activeUsers: 1234,
     resumesCreated: 45678,
@@ -142,14 +143,14 @@ const Home = () => {
     },
   ]);
 
-  const [userProgress, setUserProgress] = useState({
-    profileCompletion: 75,
-    skillsAssessed: 8,
-    resumesCreated: 3,
-    interviewsScheduled: 2,
-    jobApplications: 12,
-    networkConnections: 45,
-  });
+  // const [userProgress, setUserProgress] = useState({
+  //   profileCompletion: 75,
+  //   skillsAssessed: 8,
+  //   resumesCreated: 3,
+  //   interviewsScheduled: 2,
+  //   jobApplications: 12,
+  //   networkConnections: 45,
+  // });
 
   // Simulate real-time updates
   useEffect(() => {
@@ -723,7 +724,10 @@ const Home = () => {
                   Start learning AI skills now and increase your job prospects
                   by 45%!
                 </p>
-                <button className="w-full bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-lg font-semibold transform hover:scale-105 transition-all duration-200">
+                <button
+                  onClick={() => navigate("/ai")}
+                  className="w-full bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-lg font-semibold transform hover:scale-105 transition-all duration-200"
+                >
                   Start AI Assessment
                 </button>
               </div>

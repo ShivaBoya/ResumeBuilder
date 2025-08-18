@@ -19,6 +19,7 @@ import HomeBeforeLogin from "./pages/HomeBeforeLogin";
 import HomeAfterLogin from "./pages/AfterLoginHome";
 import AI from "./pages/Ai"; // AI Assistant page
 import Templates from "./pages/Template";
+import Profile from "./pages/Profile";
 //import Features from "./pages/Features";
 
 // Protected route wrapper component
@@ -104,11 +105,19 @@ function App() {
               </PrivateRoute>
             }
           />
-           <Route
+          <Route
             path="/templates"
             element={
               <PrivateRoute>
-                <Templates/>
+                <Templates />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <PrivateRoute>
+                <Profile />
               </PrivateRoute>
             }
           />
