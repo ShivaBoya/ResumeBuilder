@@ -14,7 +14,7 @@ export default function Premium() {
 
       // Create payment order
       const response = await axios.post(
-        "http://localhost:3000/paymentcreate",
+        "https://fullstackbakend-8.onrender.com/paymentcreate",
         { membershipType: type },
         {
           headers: {

@@ -7,7 +7,7 @@ import { toPng } from "html-to-image";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = "https://fullstackbakend-8.onrender.com";
 
 const MyResume = () => {
   const navigate = useNavigate();
