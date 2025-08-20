@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -102,7 +101,9 @@ const MyResume = () => {
       toast.success("📧 Resume sent via email successfully!");
     } catch (err) {
       console.error("Error sending resume email:", err);
-      toast.error(err.response?.data?.message || " Failed to send resume via email");
+      toast.error(
+        err.response?.data?.message || " Failed to send resume via email"
+      );
     } finally {
       setIsSending(false);
     }
@@ -146,6 +147,34 @@ const MyResume = () => {
           </div>
         )}
 
+        {/* ✅ Work Experience Section */}
+        {resume.workExperience?.length > 0 && (
+          <div className="mb-4">
+            <h2 className="text-green-700 font-bold text-lg mb-1">
+              Work Experience
+            </h2>
+            {[...resume.workExperience]
+              .sort(
+                (a, b) =>
+                  new Date(b.endDate || Date.now()) -
+                  new Date(a.endDate || Date.now())
+              )
+              .map((exp, idx) => (
+                <div key={idx} className="mb-2">
+                  <p>
+                    <strong>{exp.position}</strong> at {exp.company}
+                  </p>
+                  <p className="text-sm">
+                    {exp.startDate} - {exp.endDate || "Present"}
+                  </p>
+                  {exp.description && (
+                    <p className="text-justify text-sm">{exp.description}</p>
+                  )}
+                </div>
+              ))}
+          </div>
+        )}
+
         {resume.education?.length > 0 && (
           <div className="mb-4">
             <h2 className="text-green-700 font-bold text-lg mb-1">Education</h2>
@@ -167,7 +196,9 @@ const MyResume = () => {
                   <strong>{proj.title}</strong>: {proj.description}
                 </p>
                 {proj.techStack?.length > 0 && (
-                  <p className="text-sm">TechStack: {proj.techStack.join(", ")}</p>
+                  <p className="text-sm">
+                    TechStack: {proj.techStack.join(", ")}
+                  </p>
                 )}
               </div>
             ))}

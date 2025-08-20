@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -6,7 +5,8 @@ import { toast } from "react-toastify";
 import Preview from "./Preview";
 
 const BASE_URL = "https://fullstackbakend-8.onrender.com";
-const generateId = () => `${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+const generateId = () =>
+  `${Date.now()}-${Math.floor(Math.random() * 1000000)}`;
 
 const ResumeBuilder = () => {
   const navigate = useNavigate();
@@ -66,12 +66,14 @@ const ResumeBuilder = () => {
         const res = await axios.get(`${BASE_URL}/resume/getresume`, {
           headers: {
             Authorization: `Bearer ${token}`,
-            RefreshToken: `Refresh ${refreshToken}`,
+            RefreshToken: refreshToken,
           },
         });
+
         if (res.data?.resume) {
           const data = res.data.resume;
-          // Ensure arrays exist
+
+          // Re-map to ensure IDs for React rendering
           data.workExperience = (data.workExperience || []).map((w) => ({
             ...w,
             id: generateId(),
@@ -89,11 +91,12 @@ const ResumeBuilder = () => {
             id: generateId(),
           }));
           data.skills = data.skills || [];
+
           setResumeData(data);
           setIsExisting(true);
         }
       } catch (err) {
-        console.log("No existing resume, creating new.", err);
+        console.log("ℹ️ No existing resume found, creating new.", err.message);
       }
     };
     if (token) fetchResume();
@@ -132,6 +135,7 @@ const ResumeBuilder = () => {
     });
   };
 
+  // Add/remove handlers
   const handleAdd = (section, newItem) => {
     setResumeData((prev) => ({
       ...prev,
@@ -148,6 +152,7 @@ const ResumeBuilder = () => {
 
   const handleAddSkill = () =>
     setResumeData((prev) => ({ ...prev, skills: [...prev.skills, ""] }));
+
   const handleRemoveSkill = (idx) =>
     setResumeData((prev) => {
       const s = [...prev.skills];
@@ -170,57 +175,62 @@ const ResumeBuilder = () => {
         ),
         projects: resumeData.projects.map(({ id, ...rest }) => rest),
       };
+
       const url = isExisting
         ? `${BASE_URL}/resume/update`
         : `${BASE_URL}/resume/create`;
       const method = isExisting ? "put" : "post";
+
       await axios({
         method,
         url,
         data: payload,
         headers: {
           Authorization: `Bearer ${token}`,
-          RefreshToken: `Refresh ${refreshToken}`,
+          RefreshToken: refreshToken,
         },
       });
+
       toast.success("✅ Resume saved successfully!");
       setIsExisting(true);
       navigate("/my-resumes");
     } catch (err) {
-      console.error("Error saving resume:", err);
+      console.error("❌ Error saving resume:", err);
       toast.error(err.response?.data?.message || "Failed to save resume");
     }
   };
 
+  // Send email
   const handleSendEmail = async () => {
     try {
       await axios.get(`${BASE_URL}/resume/send`, {
         headers: {
           Authorization: `Bearer ${token}`,
-          RefreshToken: `Refresh ${refreshToken}`,
+          RefreshToken: refreshToken,
         },
       });
       toast.success("📧 Resume sent via email successfully!");
     } catch (err) {
-      console.error("Error sending resume email:", err);
+      console.error("❌ Error sending resume email:", err);
       toast.error(err.response?.data?.message || "Failed to send email");
     }
   };
 
+  // Delete resume
   const handleDelete = async () => {
     if (!window.confirm("Are you sure you want to delete your resume?")) return;
     try {
       await axios.delete(`${BASE_URL}/resume/delete`, {
         headers: {
           Authorization: `Bearer ${token}`,
-          RefreshToken: `Refresh ${refreshToken}`,
+          RefreshToken: refreshToken,
         },
       });
       toast.success("🗑️ Resume deleted!");
       setIsExisting(false);
       window.location.reload();
     } catch (err) {
-      console.error("Error deleting resume:", err);
+      console.error("❌ Error deleting resume:", err);
       toast.error(err.response?.data?.message || "Failed to delete resume");
     }
   };
