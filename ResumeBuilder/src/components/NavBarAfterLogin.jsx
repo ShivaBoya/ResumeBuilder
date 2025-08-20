@@ -122,10 +122,8 @@ function NavBarAfterLogin({ onLogout }) {
             aria-label="Notifications"
             className="relative hover:bg-blue-800 p-2 rounded"
           >
-            <HiBell size={20} />
-            <span className="absolute -top-1 -right-1 bg-red-500 text-xs rounded-full w-4 h-4 flex items-center justify-center font-semibold">
-              1
-            </span>
+           
+            
           </button>
 
           {/* Profile Dropdown */}
@@ -148,15 +146,7 @@ function NavBarAfterLogin({ onLogout }) {
                 >
                   Profile
                 </button>
-                <button
-                  onClick={() => {
-                    setProfileOpen(false);
-                    navigate("/settings");
-                  }}
-                  className="px-4 py-2 text-left hover:bg-gray-200"
-                >
-                  Settings
-                </button>
+               
                 <button
                   onClick={() => {
                     setProfileOpen(false);
@@ -222,25 +212,7 @@ function NavBarAfterLogin({ onLogout }) {
             {/* Mobile profile dropdown */}
             <div className="px-4 py-2 border-t border-blue-700">
               <span className="block mb-1">Welcome, {username}!</span>
-              <button
-                type="button"
-                onClick={() => navigate("/profile")}
-                className="w-full text-left px-4 py-2 hover:bg-blue-700 rounded transition-colors duration-200"
-              >
-                Profile
-              </button>
-              <button
-                onClick={() => navigate("/settings")}
-                className="w-full text-left px-2 py-1 hover:bg-blue-800 rounded"
-              >
-                Settings
-              </button>
-              <button
-                onClick={handleLogout}
-                className="w-full text-left px-2 py-1 hover:bg-red-700 rounded text-red-600"
-              >
-                Logout
-              </button>
+              
             </div>
           </div>
         )}
