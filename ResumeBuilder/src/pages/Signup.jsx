@@ -63,8 +63,8 @@ const Signup = () => {
         }`}
         aria-label="Signup Form"
       >
-        <h2 className="text-3xl font-bold mb-6 text-center text-green-700">
-          Create an Account
+        <h2 className="text-3xl font-bold mb-6 text-center text-green-700 hover:text-emerald-600 transition-colors cursor-pointer">
+          <Link to="/home">Create an Account</Link>
         </h2>
 
         <input

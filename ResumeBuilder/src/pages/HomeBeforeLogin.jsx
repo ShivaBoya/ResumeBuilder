@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-
+import { Menu, X } from "lucide-react";
 const features = [
   {
     title: "Create Professional Resumes",
@@ -155,6 +155,7 @@ const stats = [
 ];
 
 export default function Home() {
+   const [mobileOpen, setMobileOpen] = useState(false);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [isVisible, setIsVisible] = useState({});
 
@@ -187,6 +188,7 @@ export default function Home() {
       <nav className="bg-white/80 backdrop-blur-md border-b border-gray-200/50 sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
+            {/* Logo */}
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-blue-600 rounded-xl flex items-center justify-center">
                 <span className="text-white font-bold text-xl">R</span>
@@ -195,7 +197,9 @@ export default function Home() {
                 ResumeAI
               </span>
             </div>
-            <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-8">
+
+            {/* Desktop Menu */}
+            <div className="hidden md:flex items-center space-x-8">
               <Link
                 to="/login"
                 className="text-gray-600 hover:text-emerald-600 transition-colors"
@@ -209,8 +213,36 @@ export default function Home() {
                 Get Started Free
               </Link>
             </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="md:hidden text-gray-700 focus:outline-none"
+            >
+              {mobileOpen ? <X size={28} /> : <Menu size={28} />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Dropdown */}
+        {mobileOpen && (
+          <div className="md:hidden bg-white/95 backdrop-blur-md border-t border-gray-200/50 px-6 py-4 space-y-4">
+            <Link
+              to="/login"
+              onClick={() => setMobileOpen(false)}
+              className="block text-gray-600 hover:text-emerald-600 transition-colors"
+            >
+              Login
+            </Link>
+            <Link
+              to="/signup"
+              onClick={() => setMobileOpen(false)}
+              className="block bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-6 py-2 rounded-full font-semibold hover:from-emerald-600 hover:to-emerald-700 transition-all shadow-lg text-center"
+            >
+              Get Started Free
+            </Link>
+          </div>
+        )}
       </nav>
 
       {/* Hero Section */}

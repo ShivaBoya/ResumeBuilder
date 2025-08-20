@@ -65,8 +65,8 @@ const Login = () => {
           loading ? "opacity-75 scale-[0.98]" : "opacity-100 scale-100"
         }`}
       >
-        <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
-          Welcome Back!
+        <h2 className="text-3xl font-bold mb-6 text-center text-gray-800 hover:text-emerald-600 transition-colors cursor-pointer">
+          <Link to="/home">Welcome Back!</Link>
         </h2>
 
         <input

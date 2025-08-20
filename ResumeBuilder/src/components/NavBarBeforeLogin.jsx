@@ -7,7 +7,7 @@ function NavBarBeforeLogin() {
         to="/home"
         className="text-xl font-bold text-white hover:text-green-400 transition"
       >
-        Resume
+        
       </Link>
       {/* <div className="flex items-center gap-4">
         <Link
