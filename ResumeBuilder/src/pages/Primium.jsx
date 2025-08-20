@@ -37,15 +37,15 @@ export default function Premium() {
         amount,
         currency,
         name: "ResumeBuilder",
-        description: "Connect to other developers",
+        description: "Build Professional Resumes Effortlessly",
         order_id: orderId,
         prefill: {
-          name: notes.username || "", // fallback to username
+          name: notes.username || "",
           email: notes.email || "",
           contact: notes.contact || "",
         },
         theme: {
-          color: "#F37254",
+          color: "#2563EB", // ResumeBuilder theme color
         },
       };
 
@@ -59,47 +59,57 @@ export default function Premium() {
     }
   };
 
+  // Membership Plans (Dynamic)
+  const plans = [
+    {
+      type: "silver",
+      title: "Silver Membership",
+      color: "bg-pink-500 hover:bg-pink-600",
+      features: [
+        "Build up to 5 resumes",
+        "Access to 10 professional templates",
+        "Basic customization options",
+        "3 months validity",
+      ],
+    },
+    {
+      type: "gold",
+      title: "Gold Membership",
+      color: "bg-indigo-500 hover:bg-indigo-600",
+      features: [
+        "Unlimited resume creation",
+        "50+ premium templates",
+        "AI-powered resume suggestions",
+        "Priority customer support",
+        "6 months validity",
+      ],
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-6">
-      <h1 className="text-3xl font-bold mb-10">Choose Your Membership</h1>
+      <h1 className="text-3xl font-bold mb-10">Choose Your ResumeBuilder Membership</h1>
 
-      <div className="flex flex-col md:flex-row items-center gap-8">
-        {/* Silver Membership */}
-        <div className="bg-gray-800 rounded-lg p-6 w-80 shadow-lg">
-          <h2 className="text-2xl font-semibold mb-4">Silver Membership</h2>
-          <ul className="mb-6 space-y-2 text-gray-300">
-            <li>- Chat with other people</li>
-            <li>- 100 connection Requests per day</li>
-            <li>- Blue Tick</li>
-            <li>- 3 months</li>
-          </ul>
-          <button
-            className="bg-pink-500 text-white px-6 py-2 rounded-md hover:bg-pink-600 transition"
-            onClick={() => handleBuyClick("silver")}
+      <div className="flex flex-col md:flex-row items-center gap-8 flex-wrap justify-center">
+        {plans.map((plan) => (
+          <div
+            key={plan.type}
+            className="bg-gray-800 rounded-lg p-6 w-80 shadow-lg flex flex-col justify-between"
           >
-            Buy Silver
-          </button>
-        </div>
-
-        {/* OR Divider */}
-        <div className="text-gray-400 font-semibold">OR</div>
-
-        {/* Gold Membership */}
-        <div className="bg-gray-800 rounded-lg p-6 w-80 shadow-lg">
-          <h2 className="text-2xl font-semibold mb-4">Gold Membership</h2>
-          <ul className="mb-6 space-y-2 text-gray-300">
-            <li>- Chat with other people</li>
-            <li>- Infinite connection Requests per day</li>
-            <li>- Blue Tick</li>
-            <li>- 6 months</li>
-          </ul>
-          <button
-            className="bg-indigo-500 text-white px-6 py-2 rounded-md hover:bg-indigo-600 transition"
-            onClick={() => handleBuyClick("gold")}
-          >
-            Buy Gold
-          </button>
-        </div>
+            <h2 className="text-2xl font-semibold mb-4">{plan.title}</h2>
+            <ul className="mb-6 space-y-2 text-gray-300">
+              {plan.features.map((f, i) => (
+                <li key={i}>- {f}</li>
+              ))}
+            </ul>
+            <button
+              className={`${plan.color} text-white px-6 py-2 rounded-md transition`}
+              onClick={() => handleBuyClick(plan.type)}
+            >
+              Buy {plan.title}
+            </button>
+          </div>
+        ))}
       </div>
     </div>
   );

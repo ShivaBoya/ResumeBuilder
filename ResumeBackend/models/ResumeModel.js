@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const resumeSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+
   personalInfo: {
     name: String,
     email: String,
@@ -11,7 +12,18 @@ const resumeSchema = new mongoose.Schema({
     github: String,
   },
 
-  workExperience: { type: [Object], default: [] },
+  workExperience: {
+    type: [
+      {
+        company: String,
+        role: String,
+        startDate: String,
+        endDate: String,
+        description: String,
+      },
+    ],
+    default: [],
+  },
 
   education: {
     type: [

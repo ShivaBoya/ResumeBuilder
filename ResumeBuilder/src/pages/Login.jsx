@@ -21,13 +21,6 @@ const Login = () => {
     try {
       const res = await axios.post(`${BASE_URL}/users/login`, formData);
 
-      // ✅ Success toast
-      toast.success(res.data.message || "Login successful!", {
-        position: "top-center",
-        autoClose: 3000,
-        theme: "colored",
-      });
-
       // Store tokens and user info
       localStorage.setItem("accessToken", res.data.accessToken);
       localStorage.setItem("refreshToken", res.data.refreshToken);
@@ -36,15 +29,23 @@ const Login = () => {
       // Update global state
       window.dispatchEvent(new Event("storage"));
 
-      // Redirect after toast delay
-      setTimeout(() => navigate("/", { replace: true }), 3000);
+      // ✅ Success toast with navigation after toast closes
+      toast.success(res.data.message || "Login successful!", {
+        position: "top-center",
+        autoClose: 2000, // 3 seconds
+        theme: "colored",
+        onClose: () => navigate("/", { replace: true }), // navigate after toast closes
+      });
     } catch (err) {
       // ✅ Error toast
-      toast.error(err.response?.data?.message || "Login failed! Please try again.", {
-        position: "top-center",
-        autoClose: 3000,
-        theme: "colored",
-      });
+      toast.error(
+        err.response?.data?.message || "Login failed! Please try again.",
+        {
+          position: "top-center",
+          autoClose: 3000,
+          theme: "colored",
+        }
+      );
     } finally {
       setLoading(false);
     }
@@ -55,7 +56,7 @@ const Login = () => {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 px-4">
-      {/* ✅ Toast container */}
+      {/* Toast container */}
       <ToastContainer />
 
       <form
@@ -64,7 +65,9 @@ const Login = () => {
           loading ? "opacity-75 scale-[0.98]" : "opacity-100 scale-100"
         }`}
       >
-        <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Welcome Back!</h2>
+        <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
+          Welcome Back!
+        </h2>
 
         <input
           type="email"
@@ -92,7 +95,9 @@ const Login = () => {
           type="submit"
           disabled={loading}
           className={`w-full p-3 rounded-lg font-semibold transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-opacity-50 ${
-            loading ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700 text-white"
+            loading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-green-600 hover:bg-green-700 text-white"
           }`}
         >
           {loading ? "Logging in..." : "Login"}

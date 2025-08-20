@@ -1,34 +1,15 @@
+
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { 
-  User, 
-  Briefcase, 
-  GraduationCap, 
-  Award, 
-  Code2, 
-  FileText,
-  Plus,
-  Trash2,
-  Save,
-  Eye,
-  Mail,
-  Phone,
-  MapPin,
-  Github,
-  Linkedin,
-  Calendar,
-  Star,
-  CheckCircle2,
-  ArrowRight
-} from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import Preview from "./Preview";
 
 const BASE_URL = "http://localhost:3000";
+const generateId = () => `${Date.now()}-${Math.floor(Math.random() * 10000)}`;
 
 const ResumeBuilder = () => {
   const navigate = useNavigate();
-  
   const [resumeData, setResumeData] = useState({
     personalInfo: {
       name: "",
@@ -40,6 +21,7 @@ const ResumeBuilder = () => {
     },
     workExperience: [
       {
+        id: generateId(),
         company: "",
         position: "",
         startDate: "",
@@ -48,810 +30,687 @@ const ResumeBuilder = () => {
       },
     ],
     education: [
-      { institution: "", degree: "", startDate: "", endDate: "", grade: "" },
+      {
+        id: generateId(),
+        institution: "",
+        degree: "",
+        startDate: "",
+        endDate: "",
+        grade: "",
+      },
     ],
     skills: [""],
-    certifications: [{ name: "", issuer: "", year: "" }],
+    certifications: [{ id: generateId(), name: "", issuer: "", year: "" }],
     projects: [
       {
+        id: generateId(),
         title: "",
         description: "",
         techStack: [""],
-        githublink: "",
+        githubLink: "",
         collaborators: [],
       },
     ],
     coverLetter: { title: "", content: "" },
     theme: { font: "Arial", color: "#000000", layout: "classic" },
-    versions: [],
   });
-  
-  const [isExisting, setIsExisting] = useState(false);
-  const [activeSection, setActiveSection] = useState("personalInfo");
-  const [completionProgress, setCompletionProgress] = useState(0);
 
+  const [isExisting, setIsExisting] = useState(false);
   const token = localStorage.getItem("accessToken");
   const refreshToken = localStorage.getItem("refreshToken");
-
-  // Calculate completion progress
-  useEffect(() => {
-    let totalFields = 0;
-    let completedFields = 0;
-
-    // Personal info
-    Object.values(resumeData.personalInfo).forEach(value => {
-      totalFields++;
-      if (value.trim()) completedFields++;
-    });
-
-    // Work experience
-    resumeData.workExperience.forEach(exp => {
-      Object.values(exp).forEach(value => {
-        totalFields++;
-        if (value.trim()) completedFields++;
-      });
-    });
-
-    // Education
-    resumeData.education.forEach(edu => {
-      Object.values(edu).forEach(value => {
-        totalFields++;
-        if (value.trim()) completedFields++;
-      });
-    });
-
-    // Skills
-    resumeData.skills.forEach(skill => {
-      totalFields++;
-      if (skill.trim()) completedFields++;
-    });
-
-    // Certifications
-    resumeData.certifications.forEach(cert => {
-      Object.values(cert).forEach(value => {
-        totalFields++;
-        if (value.trim()) completedFields++;
-      });
-    });
-
-    // Projects
-    resumeData.projects.forEach(proj => {
-      Object.entries(proj).forEach(([key, value]) => {
-        if (key === 'techStack') {
-          totalFields++;
-          if (value.length > 0 && value[0].trim()) completedFields++;
-        } else if (key !== 'collaborators') {
-          totalFields++;
-          if (value.trim()) completedFields++;
-        }
-      });
-    });
-
-    // Cover letter
-    totalFields += 2;
-    if (resumeData.coverLetter.title.trim()) completedFields++;
-    if (resumeData.coverLetter.content.trim()) completedFields++;
-
-    setCompletionProgress(Math.round((completedFields / totalFields) * 100));
-  }, [resumeData]);
 
   // Fetch existing resume
   useEffect(() => {
     const fetchResume = async () => {
       try {
-        const res = await axios.get(BASE_URL + "/resume/getresume", {
+        const res = await axios.get(`${BASE_URL}/resume/getresume`, {
           headers: {
             Authorization: `Bearer ${token}`,
             RefreshToken: `Refresh ${refreshToken}`,
           },
         });
         if (res.data?.resume) {
-          setResumeData(res.data.resume);
+          const data = res.data.resume;
+          // Ensure arrays exist
+          data.workExperience = (data.workExperience || []).map((w) => ({
+            ...w,
+            id: generateId(),
+          }));
+          data.education = (data.education || []).map((e) => ({
+            ...e,
+            id: generateId(),
+          }));
+          data.certifications = (data.certifications || []).map((c) => ({
+            ...c,
+            id: generateId(),
+          }));
+          data.projects = (data.projects || []).map((p) => ({
+            ...p,
+            id: generateId(),
+          }));
+          data.skills = data.skills || [];
+          setResumeData(data);
           setIsExisting(true);
         }
-      } catch (error) {
-        console.log("No existing resume, creating new.",error);
+      } catch (err) {
+        console.log("No existing resume, creating new.", err);
       }
     };
-    
-    if (token) {
-      fetchResume();
-    }
+    if (token) fetchResume();
   }, [token, refreshToken]);
 
-  const handleChange = (section, field, value, index = null) => {
-    if (Array.isArray(resumeData[section]) && index !== null) {
-      const updatedArray = [...resumeData[section]];
-      updatedArray[index] = { ...updatedArray[index], [field]: value };
-      setResumeData({ ...resumeData, [section]: updatedArray });
-    } else if (typeof resumeData[section] === 'object' && !Array.isArray(resumeData[section])) {
-      setResumeData({
-        ...resumeData,
-        [section]: { ...resumeData[section], [field]: value },
-      });
-    }
+  // Generic change handler
+  const handleChange = (
+    section,
+    field,
+    value,
+    id = null,
+    nestedIndex = null
+  ) => {
+    setResumeData((prev) => {
+      if (Array.isArray(prev[section]) && id) {
+        const updated = prev[section].map((item) =>
+          item.id === id
+            ? nestedIndex !== null
+              ? {
+                  ...item,
+                  [field]: item[field].map((v, idx) =>
+                    idx === nestedIndex ? value : v
+                  ),
+                }
+              : { ...item, [field]: value }
+            : item
+        );
+        return { ...prev, [section]: updated };
+      } else if (section === "skills") {
+        const updatedSkills = [...prev.skills];
+        if (id !== null) updatedSkills[id] = value;
+        return { ...prev, skills: updatedSkills };
+      } else {
+        return { ...prev, [section]: { ...prev[section], [field]: value } };
+      }
+    });
   };
 
   const handleAdd = (section, newItem) => {
-    if (Array.isArray(resumeData[section])) {
-      setResumeData({
-        ...resumeData,
-        [section]: [...resumeData[section], newItem],
-      });
-    }
+    setResumeData((prev) => ({
+      ...prev,
+      [section]: [...prev[section], { id: generateId(), ...newItem }],
+    }));
   };
 
-  const handleRemove = (section, index) => {
-    if (Array.isArray(resumeData[section])) {
-      const updatedArray = [...resumeData[section]];
-      updatedArray.splice(index, 1);
-      setResumeData({ ...resumeData, [section]: updatedArray });
-    }
+  const handleRemove = (section, id) => {
+    setResumeData((prev) => ({
+      ...prev,
+      [section]: prev[section].filter((item) => item.id !== id),
+    }));
   };
 
+  const handleAddSkill = () =>
+    setResumeData((prev) => ({ ...prev, skills: [...prev.skills, ""] }));
+  const handleRemoveSkill = (idx) =>
+    setResumeData((prev) => {
+      const s = [...prev.skills];
+      s.splice(idx, 1);
+      return { ...prev, skills: s };
+    });
+
+  // Submit resume
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     try {
+      const payload = {
+        ...resumeData,
+        workExperience: resumeData.workExperience.map(
+          ({ id, ...rest }) => rest
+        ),
+        education: resumeData.education.map(({ id, ...rest }) => rest),
+        certifications: resumeData.certifications.map(
+          ({ id, ...rest }) => rest
+        ),
+        projects: resumeData.projects.map(({ id, ...rest }) => rest),
+      };
       const url = isExisting
-        ? BASE_URL + "/resume/update"
-        : BASE_URL + "/resume/create";
-
-      const res = await axios({
-        method: isExisting ? "put" : "post",
+        ? `${BASE_URL}/resume/update`
+        : `${BASE_URL}/resume/create`;
+      const method = isExisting ? "put" : "post";
+      await axios({
+        method,
         url,
-        data: resumeData,
+        data: payload,
         headers: {
           Authorization: `Bearer ${token}`,
           RefreshToken: `Refresh ${refreshToken}`,
         },
       });
-
-      const newAccessToken = res.headers["new-access-token"];
-      if (newAccessToken) {
-        localStorage.setItem("accessToken", newAccessToken);
-      }
-
-      // Show success message
-      alert("Resume saved successfully!");
-      
-      setTimeout(() => {
-        navigate("/my-resumes");
-      }, 1500);
-    } catch (error) {
-      console.error("Error saving resume:", error);
-      alert(error.response?.data?.message || "Failed to save resume. Please try again.");
+      toast.success("✅ Resume saved successfully!");
+      setIsExisting(true);
+      navigate("/my-resumes");
+    } catch (err) {
+      console.error("Error saving resume:", err);
+      toast.error(err.response?.data?.message || "Failed to save resume");
     }
   };
 
-  const getIconForField = (field) => {
-    switch (field) {
-      case 'email': return Mail;
-      case 'phone': return Phone;
-      case 'address': return MapPin;
-      case 'github': return Github;
-      case 'linkedin': return Linkedin;
-      default: return User;
+  const handleSendEmail = async () => {
+    try {
+      await axios.get(`${BASE_URL}/resume/send`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          RefreshToken: `Refresh ${refreshToken}`,
+        },
+      });
+      toast.success("📧 Resume sent via email successfully!");
+    } catch (err) {
+      console.error("Error sending resume email:", err);
+      toast.error(err.response?.data?.message || "Failed to send email");
     }
   };
 
-  const sections = [
-    { id: "personalInfo", title: "Personal Information", icon: User, color: "bg-blue-500" },
-    { id: "workExperience", title: "Work Experience", icon: Briefcase, color: "bg-green-500" },
-    { id: "education", title: "Education", icon: GraduationCap, color: "bg-purple-500" },
-    { id: "skills", title: "Skills & Expertise", icon: Code2, color: "bg-orange-500" },
-    { id: "certifications", title: "Certifications", icon: Award, color: "bg-red-500" },
-    { id: "projects", title: "Projects", icon: Code2, color: "bg-indigo-500" },
-    { id: "coverLetter", title: "Cover Letter", icon: FileText, color: "bg-pink-500" },
-  ];
-
-  const SectionCard = ({ title, icon: Icon, children, isActive, color }) => (
-    <div className={`relative overflow-hidden rounded-xl border transition-all duration-500 transform hover:scale-[1.02] ${
-      isActive 
-        ? 'border-blue-500 shadow-2xl shadow-blue-500/20 bg-gradient-to-br from-white to-blue-50' 
-        : 'border-gray-200 shadow-lg hover:shadow-xl bg-white hover:bg-gray-50'
-    }`}>
-      <div className={`absolute top-0 left-0 w-full h-1 ${color} transition-all duration-300`}></div>
-      <div className="p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <div className={`p-2 rounded-lg ${color} bg-opacity-10`}>
-            <Icon className={`h-6 w-6 text-gray-700`} />
-          </div>
-          <h3 className="text-xl font-bold text-gray-800">{title}</h3>
-          {isActive && (
-            <div className="ml-auto">
-              <CheckCircle2 className="h-5 w-5 text-green-500 animate-pulse" />
-            </div>
-          )}
-        </div>
-        {children}
-      </div>
-    </div>
-  );
+  const handleDelete = async () => {
+    if (!window.confirm("Are you sure you want to delete your resume?")) return;
+    try {
+      await axios.delete(`${BASE_URL}/resume/delete`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          RefreshToken: `Refresh ${refreshToken}`,
+        },
+      });
+      toast.success("🗑️ Resume deleted!");
+      setIsExisting(false);
+      window.location.reload();
+    } catch (err) {
+      console.error("Error deleting resume:", err);
+      toast.error(err.response?.data?.message || "Failed to delete resume");
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
-      {/* Header with Progress */}
-      <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-200">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                Resume Builder
-              </h1>
-              <p className="text-gray-600 mt-1">Create your professional resume</p>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-gray-600">Progress:</span>
-                <div className="w-32 h-3 bg-gray-200 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-gradient-to-r from-green-400 to-green-600 transition-all duration-500 ease-out"
-                    style={{ width: `${completionProgress}%` }}
-                  ></div>
-                </div>
-                <span className="text-sm font-bold text-green-600">{completionProgress}%</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="container mx-auto px-6 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left: Resume Form */}
-          <div className="space-y-6">
-            {/* Section Navigation */}
-            <div className="bg-white rounded-xl p-4 shadow-lg border">
-              <h3 className="font-semibold text-gray-800 mb-3">Quick Navigation</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4 gap-2">
-                {sections.map((section) => (
-                  <button
-                    key={section.id}
-                    onClick={() => setActiveSection(section.id)}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
-                      activeSection === section.id
-                        ? 'bg-blue-500 text-white shadow-md transform scale-105'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:scale-105'
-                    }`}
-                  >
-                    <section.icon className="h-4 w-4" />
-                    <span className="hidden sm:block">{section.title.split(' ')[0]}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Personal Information */}
-              <SectionCard 
-                title="Personal Information" 
-                icon={User} 
-                isActive={activeSection === "personalInfo"}
-                color="bg-blue-500"
-              >
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {Object.entries(resumeData.personalInfo).map(([key, value]) => {
-                    const IconComponent = getIconForField(key);
-                    return (
-                      <div key={key} className="relative group">
-                        <label className="block text-sm font-semibold text-gray-700 mb-2 capitalize">
-                          {key.replace(/([A-Z])/g, ' $1').trim()}
-                        </label>
-                        <div className="relative">
-                          <IconComponent className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 group-hover:text-blue-500 transition-colors" />
-                          <input
-                            type={key === 'email' ? 'email' : 'text'}
-                            placeholder={`Enter your ${key.replace(/([A-Z])/g, ' $1').toLowerCase()}`}
-                            value={value}
-                            onChange={(e) =>
-                              handleChange("personalInfo", key, e.target.value)
-                            }
-                            className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 hover:border-blue-300 group-hover:shadow-md"
-                            onFocus={() => setActiveSection("personalInfo")}
-                          />
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </SectionCard>
-
-              {/* Work Experience */}
-              <SectionCard 
-                title="Work Experience" 
-                icon={Briefcase} 
-                isActive={activeSection === "workExperience"}
-                color="bg-green-500"
-              >
-                <div className="space-y-4">
-                  {resumeData.workExperience.map((exp, idx) => (
-                    <div key={idx} className="relative p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-green-400 transition-all duration-300 bg-gradient-to-r from-green-50 to-transparent">
-                      <div className="absolute -top-2 -left-2 w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold">
-                        {idx + 1}
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div className="relative">
-                          <Briefcase className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                          <input
-                            placeholder="Company Name"
-                            value={exp.company}
-                            onChange={(e) =>
-                              handleChange("workExperience", "company", e.target.value, idx)
-                            }
-                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
-                            onFocus={() => setActiveSection("workExperience")}
-                          />
-                        </div>
-                        <input
-                          placeholder="Position Title"
-                          value={exp.position}
-                          onChange={(e) =>
-                            handleChange("workExperience", "position", e.target.value, idx)
-                          }
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
-                          onFocus={() => setActiveSection("workExperience")}
-                        />
-                        <div className="relative">
-                          <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                          <input
-                            type="date"
-                            placeholder="Start Date"
-                            value={exp.startDate}
-                            onChange={(e) =>
-                              handleChange("workExperience", "startDate", e.target.value, idx)
-                            }
-                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
-                            onFocus={() => setActiveSection("workExperience")}
-                          />
-                        </div>
-                        <div className="relative">
-                          <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                          <input
-                            type="date"
-                            placeholder="End Date"
-                            value={exp.endDate}
-                            onChange={(e) =>
-                              handleChange("workExperience", "endDate", e.target.value, idx)
-                            }
-                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
-                            onFocus={() => setActiveSection("workExperience")}
-                          />
-                        </div>
-                      </div>
-                      <textarea
-                        placeholder="Job Description & Key Achievements"
-                        value={exp.description}
-                        onChange={(e) =>
-                          handleChange("workExperience", "description", e.target.value, idx)
-                        }
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 resize-none"
-                        rows={3}
-                        onFocus={() => setActiveSection("workExperience")}
-                      />
-                      {resumeData.workExperience.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => handleRemove("workExperience", idx)}
-                          className="mt-3 inline-flex items-center px-3 py-1.5 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 hover:text-red-700 transition-all duration-300 hover:scale-105"
-                        >
-                          <Trash2 className="h-4 w-4 mr-1" />
-                          Remove
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                  <button
-                    type="button"
-                    onClick={() =>
-                      handleAdd("workExperience", {
-                        company: "",
-                        position: "",
-                        startDate: "",
-                        endDate: "",
-                        description: "",
-                      })
-                    }
-                    className="w-full px-4 py-3 border-2 border-dashed border-green-300 rounded-lg text-green-600 hover:bg-green-50 hover:border-green-400 transition-all duration-300 flex items-center justify-center gap-2 font-medium hover:scale-105"
-                  >
-                    <Plus className="h-5 w-5" />
-                    Add Work Experience
-                  </button>
-                </div>
-              </SectionCard>
-
-              {/* Education */}
-              <SectionCard 
-                title="Education" 
-                icon={GraduationCap} 
-                isActive={activeSection === "education"}
-                color="bg-purple-500"
-              >
-                <div className="space-y-4">
-                  {resumeData.education.map((edu, idx) => (
-                    <div key={idx} className="relative p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-purple-400 transition-all duration-300 bg-gradient-to-r from-purple-50 to-transparent">
-                      <div className="absolute -top-2 -left-2 w-6 h-6 bg-purple-500 text-white rounded-full flex items-center justify-center text-xs font-bold">
-                        {idx + 1}
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div className="relative">
-                          <GraduationCap className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                          <input
-                            placeholder="Institution Name"
-                            value={edu.institution}
-                            onChange={(e) =>
-                              handleChange("education", "institution", e.target.value, idx)
-                            }
-                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
-                            onFocus={() => setActiveSection("education")}
-                          />
-                        </div>
-                        <input
-                          placeholder="Degree & Major"
-                          value={edu.degree}
-                          onChange={(e) =>
-                            handleChange("education", "degree", e.target.value, idx)
-                          }
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
-                          onFocus={() => setActiveSection("education")}
-                        />
-                        <div className="relative">
-                          <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                          <input
-                            type="date"
-                            placeholder="Start Date"
-                            value={edu.startDate}
-                            onChange={(e) =>
-                              handleChange("education", "startDate", e.target.value, idx)
-                            }
-                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
-                            onFocus={() => setActiveSection("education")}
-                          />
-                        </div>
-                        <div className="relative">
-                          <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                          <input
-                            type="date"
-                            placeholder="End Date"
-                            value={edu.endDate}
-                            onChange={(e) =>
-                              handleChange("education", "endDate", e.target.value, idx)
-                            }
-                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
-                            onFocus={() => setActiveSection("education")}
-                          />
-                        </div>
-                      </div>
-                      <div className="relative">
-                        <Star className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                        <input
-                          placeholder="GPA or Grade (Optional)"
-                          value={edu.grade}
-                          onChange={(e) =>
-                            handleChange("education", "grade", e.target.value, idx)
-                          }
-                          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
-                          onFocus={() => setActiveSection("education")}
-                        />
-                      </div>
-                      {resumeData.education.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => handleRemove("education", idx)}
-                          className="mt-3 inline-flex items-center px-3 py-1.5 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 hover:text-red-700 transition-all duration-300 hover:scale-105"
-                        >
-                          <Trash2 className="h-4 w-4 mr-1" />
-                          Remove
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                  <button
-                    type="button"
-                    onClick={() =>
-                      handleAdd("education", {
-                        institution: "",
-                        degree: "",
-                        startDate: "",
-                        endDate: "",
-                        grade: "",
-                      })
-                    }
-                    className="w-full px-4 py-3 border-2 border-dashed border-purple-300 rounded-lg text-purple-600 hover:bg-purple-50 hover:border-purple-400 transition-all duration-300 flex items-center justify-center gap-2 font-medium hover:scale-105"
-                  >
-                    <Plus className="h-5 w-5" />
-                    Add Education
-                  </button>
-                </div>
-              </SectionCard>
-
-              {/* Skills */}
-              <SectionCard 
-                title="Skills & Expertise" 
-                icon={Code2} 
-                isActive={activeSection === "skills"}
-                color="bg-orange-500"
-              >
-                <div className="space-y-3">
-                  {resumeData.skills.map((skill, idx) => (
-                    <div key={idx} className="flex gap-2 group">
-                      <div className="relative flex-1">
-                        <Code2 className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 group-hover:text-orange-500 transition-colors" />
-                        <input
-                          placeholder="Enter a skill (e.g., JavaScript, Project Management, etc.)"
-                          value={skill}
-                          onChange={(e) => {
-                            const updated = [...resumeData.skills];
-                            updated[idx] = e.target.value;
-                            setResumeData({ ...resumeData, skills: updated });
-                          }}
-                          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300 group-hover:border-orange-300"
-                          onFocus={() => setActiveSection("skills")}
-                        />
-                      </div>
-                      {resumeData.skills.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => handleRemove("skills", idx)}
-                          className="px-3 py-2 text-red-600 bg-red-50 rounded-lg hover:bg-red-100 hover:text-red-700 transition-all duration-300 hover:scale-105"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                  <button
-                    type="button"
-                    onClick={() => handleAdd("skills", "")}
-                    className="w-full px-4 py-3 border-2 border-dashed border-orange-300 rounded-lg text-orange-600 hover:bg-orange-50 hover:border-orange-400 transition-all duration-300 flex items-center justify-center gap-2 font-medium hover:scale-105"
-                  >
-                    <Plus className="h-5 w-5" />
-                    Add Skill
-                  </button>
-                </div>
-                {resumeData.skills.some(skill => skill.trim()) && (
-                  <div className="mt-4 p-4 bg-orange-50 rounded-lg border border-orange-200">
-                    <p className="text-sm font-medium text-orange-800 mb-2">Preview:</p>
-                    <div className="flex flex-wrap gap-2">
-                      {resumeData.skills.filter(skill => skill.trim()).map((skill, idx) => (
-                        <span key={idx} className="px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded-full border border-orange-200 hover:bg-orange-200 transition-colors">
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </SectionCard>
-
-              {/* Certifications */}
-              <SectionCard 
-                title="Certifications" 
-                icon={Award} 
-                isActive={activeSection === "certifications"}
-                color="bg-red-500"
-              >
-                <div className="space-y-4">
-                  {resumeData.certifications.map((cert, idx) => (
-                    <div key={idx} className="relative p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-red-400 transition-all duration-300 bg-gradient-to-r from-red-50 to-transparent">
-                      <div className="absolute -top-2 -left-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs font-bold">
-                        {idx + 1}
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div className="relative">
-                          <Award className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                          <input
-                            placeholder="Certification Name"
-                            value={cert.name}
-                            onChange={(e) =>
-                              handleChange("certifications", "name", e.target.value, idx)
-                            }
-                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300"
-                            onFocus={() => setActiveSection("certifications")}
-                          />
-                        </div>
-                        <input
-                          placeholder="Issuing Organization"
-                          value={cert.issuer}
-                          onChange={(e) =>
-                            handleChange("certifications", "issuer", e.target.value, idx)
-                          }
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300"
-                          onFocus={() => setActiveSection("certifications")}
-                        />
-                        <div className="relative">
-                          <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                          <input
-                            placeholder="Year"
-                            value={cert.year}
-                            onChange={(e) =>
-                              handleChange("certifications", "year", e.target.value, idx)
-                            }
-                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300"
-                            onFocus={() => setActiveSection("certifications")}
-                          />
-                        </div>
-                      </div>
-                      {resumeData.certifications.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => handleRemove("certifications", idx)}
-                          className="mt-3 inline-flex items-center px-3 py-1.5 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 hover:text-red-700 transition-all duration-300 hover:scale-105"
-                        >
-                          <Trash2 className="h-4 w-4 mr-1" />
-                          Remove
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                  <button
-                    type="button"
-                    onClick={() =>
-                      handleAdd("certifications", { name: "", issuer: "", year: "" })
-                    }
-                    className="w-full px-4 py-3 border-2 border-dashed border-red-300 rounded-lg text-red-600 hover:bg-red-50 hover:border-red-400 transition-all duration-300 flex items-center justify-center gap-2 font-medium hover:scale-105"
-                  >
-                    <Plus className="h-5 w-5" />
-                    Add Certification
-                  </button>
-                </div>
-              </SectionCard>
-
-              {/* Projects */}
-              <SectionCard 
-                title="Projects" 
-                icon={Code2} 
-                isActive={activeSection === "projects"}
-                color="bg-indigo-500"
-              >
-                <div className="space-y-4">
-                  {resumeData.projects.map((proj, idx) => (
-                    <div key={idx} className="relative p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-indigo-400 transition-all duration-300 bg-gradient-to-r from-indigo-50 to-transparent">
-                      <div className="absolute -top-2 -left-2 w-6 h-6 bg-indigo-500 text-white rounded-full flex items-center justify-center text-xs font-bold">
-                        {idx + 1}
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div className="relative">
-                          <Code2 className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                          <input
-                            placeholder="Project Title"
-                            value={proj.title}
-                            onChange={(e) =>
-                              handleChange("projects", "title", e.target.value, idx)
-                            }
-                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300"
-                            onFocus={() => setActiveSection("projects")}
-                          />
-                        </div>
-                        <div className="relative">
-                          <Github className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                          <input
-                            placeholder="GitHub Link (Optional)"
-                            value={proj.githublink}
-                            onChange={(e) =>
-                              handleChange("projects", "githublink", e.target.value, idx)
-                            }
-                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300"
-                            onFocus={() => setActiveSection("projects")}
-                          />
-                        </div>
-                      </div>
-                      <textarea
-                        placeholder="Project Description"
-                        value={proj.description}
-                        onChange={(e) =>
-                          handleChange("projects", "description", e.target.value, idx)
-                        }
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 resize-none mb-4"
-                        rows={3}
-                        onFocus={() => setActiveSection("projects")}
-                      />
-                      <input
-                        placeholder="Technologies Used (comma separated: React, Node.js, MongoDB)"
-                        value={proj.techStack.join(", ")}
-                        onChange={(e) =>
-                          handleChange(
-                            "projects",
-                            "techStack",
-                            e.target.value.split(",").map((s) => s.trim()),
-                            idx
-                          )
-                        }
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300"
-                        onFocus={() => setActiveSection("projects")}
-                      />
-                      {resumeData.projects.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => handleRemove("projects", idx)}
-                          className="mt-3 inline-flex items-center px-3 py-1.5 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 hover:text-red-700 transition-all duration-300 hover:scale-105"
-                        >
-                          <Trash2 className="h-4 w-4 mr-1" />
-                          Remove
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                  <button
-                    type="button"
-                    onClick={() =>
-                      handleAdd("projects", {
-                        title: "",
-                        description: "",
-                        techStack: [""],
-                        githublink: "",
-                        collaborators: [],
-                      })
-                    }
-                    className="w-full px-4 py-3 border-2 border-dashed border-indigo-300 rounded-lg text-indigo-600 hover:bg-indigo-50 hover:border-indigo-400 transition-all duration-300 flex items-center justify-center gap-2 font-medium hover:scale-105"
-                  >
-                    <Plus className="h-5 w-5" />
-                    Add Project
-                  </button>
-                </div>
-              </SectionCard>
-
-              {/* Cover Letter */}
-              <SectionCard 
-                title="Cover Letter" 
-                icon={FileText} 
-                isActive={activeSection === "coverLetter"}
-                color="bg-pink-500"
-              >
-                <div className="space-y-4">
-                  <div className="relative">
-                    <FileText className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <input
-                      placeholder="Cover Letter Title"
-                      value={resumeData.coverLetter.title}
-                      onChange={(e) =>
-                        handleChange("coverLetter", "title", e.target.value)
-                      }
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300"
-                      onFocus={() => setActiveSection("coverLetter")}
-                    />
-                  </div>
-                  <textarea
-                    placeholder="Cover Letter Content - Write a compelling introduction about yourself and why you're the perfect candidate..."
-                    value={resumeData.coverLetter.content}
+    <div className="max-w-7xl mx-auto p-4">
+      <div className="flex gap-6">
+        {/* Left: Form */}
+        <form onSubmit={handleSubmit} className="w-full lg:w-1/2 space-y-6">
+          {/* Personal Info */}
+          <div className="border p-4 rounded bg-blue-50">
+            <h2 className="font-bold text-lg mb-2">Personal Information</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {Object.entries(resumeData.personalInfo).map(([key, value]) => (
+                <div key={key}>
+                  <label className="block mb-1 capitalize">{key}</label>
+                  <input
+                    type={key === "email" ? "email" : "text"}
+                    placeholder={`Enter ${key}`}
+                    value={value || ""}
                     onChange={(e) =>
-                      handleChange("coverLetter", "content", e.target.value)
+                      handleChange("personalInfo", key, e.target.value)
                     }
-                    rows={8}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300 resize-none"
-                    onFocus={() => setActiveSection("coverLetter")}
+                    className="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
-              </SectionCard>
-
-              {/* Submit Button */}
-              <div className="flex gap-4 pt-6">
-                <button
-                  type="submit"
-                  className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 flex items-center justify-center gap-2"
-                >
-                  <Save className="h-5 w-5" />
-                  {isExisting ? "Update Resume" : "Save Resume"}
-                  <ArrowRight className="h-5 w-5" />
-                </button>
-                
-              </div>
-            </form>
+              ))}
+            </div>
           </div>
 
-          {/* Right: Live Preview */}
-          <div className="sticky top-24 h-fit">
-            <div className="bg-white rounded-xl shadow-2xl border p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold text-gray-800">Live Preview</h3>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-red-400 rounded-full"></div>
-                  <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
-                  <div className="w-3 h-3 bg-green-400 rounded-full"></div>
+          {/* Work Experience */}
+          <div className="border p-4 rounded bg-green-50">
+            <h2 className="font-bold text-lg mb-2">Work Experience</h2>
+            {resumeData.workExperience.map((exp) => (
+              <div key={exp.id} className="mb-4 p-2 border rounded space-y-2">
+                <input
+                  placeholder="Company"
+                  value={exp.company}
+                  onChange={(e) =>
+                    handleChange(
+                      "workExperience",
+                      "company",
+                      e.target.value,
+                      exp.id
+                    )
+                  }
+                  className="w-full px-2 py-1 border rounded focus:ring-2 focus:ring-green-500"
+                />
+                <input
+                  placeholder="Position"
+                  value={exp.position}
+                  onChange={(e) =>
+                    handleChange(
+                      "workExperience",
+                      "position",
+                      e.target.value,
+                      exp.id
+                    )
+                  }
+                  className="w-full px-2 py-1 border rounded focus:ring-2 focus:ring-green-500"
+                />
+                <div className="flex flex-col md:flex-row gap-2">
+                  <input
+                    type="date"
+                    value={exp.startDate}
+                    onChange={(e) =>
+                      handleChange(
+                        "workExperience",
+                        "startDate",
+                        e.target.value,
+                        exp.id
+                      )
+                    }
+                    className="px-2 py-1 border rounded focus:ring-2 focus:ring-green-500 w-full"
+                  />
+                  <input
+                    type="date"
+                    value={exp.endDate}
+                    onChange={(e) =>
+                      handleChange(
+                        "workExperience",
+                        "endDate",
+                        e.target.value,
+                        exp.id
+                      )
+                    }
+                    className="px-2 py-1 border rounded focus:ring-2 focus:ring-green-500 w-full"
+                  />
                 </div>
+                <textarea
+                  placeholder="Description"
+                  value={exp.description}
+                  onChange={(e) =>
+                    handleChange(
+                      "workExperience",
+                      "description",
+                      e.target.value,
+                      exp.id
+                    )
+                  }
+                  className="w-full px-2 py-1 border rounded focus:ring-2 focus:ring-green-500"
+                  rows={3}
+                />
+                {resumeData.workExperience.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => handleRemove("workExperience", exp.id)}
+                    className="text-red-600"
+                  >
+                    Remove
+                  </button>
+                )}
               </div>
-              <div className="max-h-[600px] overflow-y-auto">
-                <Preview resumeData={resumeData} />
+            ))}
+            <button
+              type="button"
+              onClick={() =>
+                handleAdd("workExperience", {
+                  company: "",
+                  position: "",
+                  startDate: "",
+                  endDate: "",
+                  description: "",
+                })
+              }
+              className="px-4 py-2 border rounded bg-green-100 text-green-700"
+            >
+              Add Work Experience
+            </button>
+          </div>
+          {/* Education */}
+          <div className="border p-4 rounded bg-purple-50">
+            <h2 className="font-bold text-lg mb-2">Education</h2>
+            {resumeData.education.map((ed) => (
+              <div key={ed.id} className="mb-4 p-2 border rounded space-y-2">
+                <input
+                  placeholder="Institution"
+                  value={ed.institution}
+                  onChange={(e) =>
+                    handleChange(
+                      "education",
+                      "institution",
+                      e.target.value,
+                      ed.id
+                    )
+                  }
+                  className="w-full px-2 py-1 border rounded"
+                />
+                <input
+                  placeholder="Degree"
+                  value={ed.degree}
+                  onChange={(e) =>
+                    handleChange("education", "degree", e.target.value, ed.id)
+                  }
+                  className="w-full px-2 py-1 border rounded"
+                />
+                <div className="flex gap-2">
+                  <input
+                    type="date"
+                    value={ed.startDate}
+                    onChange={(e) =>
+                      handleChange(
+                        "education",
+                        "startDate",
+                        e.target.value,
+                        ed.id
+                      )
+                    }
+                    className="px-2 py-1 border rounded"
+                  />
+                  <input
+                    type="date"
+                    value={ed.endDate}
+                    onChange={(e) =>
+                      handleChange(
+                        "education",
+                        "endDate",
+                        e.target.value,
+                        ed.id
+                      )
+                    }
+                    className="px-2 py-1 border rounded"
+                  />
+                </div>
+                <input
+                  placeholder="Grade"
+                  value={ed.grade}
+                  onChange={(e) =>
+                    handleChange("education", "grade", e.target.value, ed.id)
+                  }
+                  className="w-full px-2 py-1 border rounded"
+                />
+                {resumeData.education.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => handleRemove("education", ed.id)}
+                    className="text-red-600"
+                  >
+                    Remove
+                  </button>
+                )}
               </div>
+            ))}
+            <button
+              type="button"
+              onClick={() =>
+                handleAdd("education", {
+                  institution: "",
+                  degree: "",
+                  startDate: "",
+                  endDate: "",
+                  grade: "",
+                })
+              }
+              className="px-4 py-2 border rounded bg-purple-100 text-purple-700"
+            >
+              Add Education
+            </button>
+          </div>
+
+          {/* Skills */}
+          <div className="border p-4 rounded bg-yellow-50">
+            <h2 className="font-bold text-lg mb-2">Skills</h2>
+            {resumeData.skills.map((s, idx) => (
+              <div key={idx} className="flex gap-2 mb-2">
+                <input
+                  placeholder="Skill"
+                  value={s}
+                  onChange={(e) =>
+                    handleChange("skills", null, e.target.value, idx)
+                  }
+                  className="w-full px-2 py-1 border rounded"
+                />
+                {resumeData.skills.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveSkill(idx)}
+                    className="text-red-600"
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={handleAddSkill}
+              className="px-4 py-2 border rounded bg-yellow-100 text-yellow-700"
+            >
+              Add Skill
+            </button>
+          </div>
+
+          {/* Certifications */}
+          <div className="border p-4 rounded bg-indigo-50">
+            <h2 className="font-bold text-lg mb-2">Certifications</h2>
+            {resumeData.certifications.map((cert) => (
+              <div key={cert.id} className="mb-4 p-2 border rounded space-y-2">
+                <input
+                  placeholder="Name"
+                  value={cert.name}
+                  onChange={(e) =>
+                    handleChange(
+                      "certifications",
+                      "name",
+                      e.target.value,
+                      cert.id
+                    )
+                  }
+                  className="w-full px-2 py-1 border rounded"
+                />
+                <input
+                  placeholder="Issuer"
+                  value={cert.issuer}
+                  onChange={(e) =>
+                    handleChange(
+                      "certifications",
+                      "issuer",
+                      e.target.value,
+                      cert.id
+                    )
+                  }
+                  className="w-full px-2 py-1 border rounded"
+                />
+                <input
+                  placeholder="Year"
+                  value={cert.year}
+                  onChange={(e) =>
+                    handleChange(
+                      "certifications",
+                      "year",
+                      e.target.value,
+                      cert.id
+                    )
+                  }
+                  className="w-full px-2 py-1 border rounded"
+                />
+                {resumeData.certifications.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => handleRemove("certifications", cert.id)}
+                    className="text-red-600"
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() =>
+                handleAdd("certifications", { name: "", issuer: "", year: "" })
+              }
+              className="px-4 py-2 border rounded bg-indigo-100 text-indigo-700"
+            >
+              Add Certification
+            </button>
+          </div>
+
+          {/* Projects */}
+          <div className="border p-4 rounded bg-pink-50">
+            <h2 className="font-bold text-lg mb-2">Projects</h2>
+            {resumeData.projects.map((proj) => (
+              <div key={proj.id} className="mb-4 p-2 border rounded space-y-2">
+                <input
+                  placeholder="Title"
+                  value={proj.title}
+                  onChange={(e) =>
+                    handleChange("projects", "title", e.target.value, proj.id)
+                  }
+                  className="w-full px-2 py-1 border rounded"
+                />
+                <textarea
+                  placeholder="Description"
+                  value={proj.description}
+                  onChange={(e) =>
+                    handleChange(
+                      "projects",
+                      "description",
+                      e.target.value,
+                      proj.id
+                    )
+                  }
+                  className="w-full px-2 py-1 border rounded"
+                  rows={2}
+                />
+                <input
+                  placeholder="Tech Stack (comma separated)"
+                  value={proj.techStack.join(",")}
+                  onChange={(e) =>
+                    handleChange(
+                      "projects",
+                      "techStack",
+                      e.target.value.split(","),
+                      proj.id
+                    )
+                  }
+                  className="w-full px-2 py-1 border rounded"
+                />
+                <input
+                  placeholder="Github Link"
+                  value={proj.githubLink}
+                  onChange={(e) =>
+                    handleChange(
+                      "projects",
+                      "githubLink",
+                      e.target.value,
+                      proj.id
+                    )
+                  }
+                  className="w-full px-2 py-1 border rounded"
+                />
+                {resumeData.projects.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => handleRemove("projects", proj.id)}
+                    className="text-red-600"
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() =>
+                handleAdd("projects", {
+                  title: "",
+                  description: "",
+                  techStack: [""],
+                  githubLink: "",
+                  collaborators: [],
+                })
+              }
+              className="px-4 py-2 border rounded bg-pink-100 text-pink-700"
+            >
+              Add Project
+            </button>
+          </div>
+
+          {/* Cover Letter */}
+          <div className="border p-4 rounded bg-gray-50">
+            <h2 className="font-bold text-lg mb-2">Cover Letter</h2>
+            <input
+              placeholder="Title"
+              value={resumeData.coverLetter.title}
+              onChange={(e) =>
+                handleChange("coverLetter", "title", e.target.value)
+              }
+              className="w-full px-2 py-1 border rounded mb-2"
+            />
+            <textarea
+              placeholder="Content"
+              value={resumeData.coverLetter.content}
+              onChange={(e) =>
+                handleChange("coverLetter", "content", e.target.value)
+              }
+              className="w-full px-2 py-1 border rounded"
+              rows={4}
+            />
+          </div>
+
+          {/* Theme */}
+          <div className="border p-4 rounded bg-gray-100">
+            <h2 className="font-bold text-lg mb-2">Theme</h2>
+            <input
+              placeholder="Font"
+              value={resumeData.theme.font}
+              onChange={(e) => handleChange("theme", "font", e.target.value)}
+              className="w-full px-2 py-1 border rounded mb-2"
+            />
+            <input
+              type="color"
+              value={resumeData.theme.color}
+              onChange={(e) => handleChange("theme", "color", e.target.value)}
+              className="w-full h-10 mb-2"
+            />
+            <select
+              value={resumeData.theme.layout}
+              onChange={(e) => handleChange("theme", "layout", e.target.value)}
+              className="w-full px-2 py-1 border rounded"
+            >
+              <option value="classic">Classic</option>
+              <option value="modern">Modern</option>
+              <option value="creative">Creative</option>
+            </select>
+          </div>
+
+          {/* Submit Buttons */}
+          <div className="flex gap-4 mt-6">
+            <button
+              type="submit"
+              className="px-6 py-2 bg-blue-600 text-white rounded"
+            >
+              {isExisting ? "Update Resume" : "Save Resume"}
+            </button>
+            {isExisting && (
+              <>
+                <button
+                  type="button"
+                  onClick={handleSendEmail}
+                  className="px-6 py-2 bg-green-600 text-white rounded"
+                >
+                  Send via Email
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDelete}
+                  className="px-6 py-2 bg-red-600 text-white rounded"
+                >
+                  Delete Resume
+                </button>
+              </>
+            )}
+          </div>
+        </form>
+
+        {/* Right: Live Preview */}
+        <div className="w-full lg:w-1/2 lg:sticky lg:top-24 h-fit mt-6 lg:mt-0">
+          <div className="bg-white rounded-xl shadow-2xl border p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-gray-800">Live Preview</h3>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-red-400 rounded-full"></div>
+                <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                <div className="w-3 h-3 bg-green-400 rounded-full"></div>
+              </div>
+            </div>
+            <div className="max-h-[600px] overflow-y-auto">
+              <Preview resumeData={resumeData} />
             </div>
           </div>
         </div>

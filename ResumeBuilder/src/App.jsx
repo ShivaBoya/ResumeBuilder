@@ -7,43 +7,47 @@ import {
   Navigate,
 } from "react-router-dom";
 
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+// Components
 import NavBarBeforeLogin from "./components/NavBarBeforeLogin";
 import NavBarAfterLogin from "./components/NavBarAfterLogin";
 
+// Pages
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ResumeBuilder from "./pages/ResumeBuilder";
 import MyResumes from "./pages/MyResume";
-import Premium from "./pages/Primium"; // added Premium page
+import Premium from "./pages/Primium";
 import HomeBeforeLogin from "./pages/HomeBeforeLogin";
 import HomeAfterLogin from "./pages/AfterLoginHome";
-import AI from "./pages/Ai"; // AI Assistant page
+import AI from "./pages/Ai";
 import Templates from "./pages/Template";
 import Profile from "./pages/Profile";
-//import Features from "./pages/Features";
 
-// Protected route wrapper component
+// ✅ PrivateRoute wrapper
 function PrivateRoute({ children, redirectTo = "/login" }) {
   const token = localStorage.getItem("accessToken");
   return token ? children : <Navigate to={redirectTo} replace />;
 }
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    !!localStorage.getItem("accessToken") // ✅ Initial state from storage
+  );
 
-  // Update login status based on token presence
+  // ✅ Update login status when storage changes (cross-tab)
   const updateLoginStatus = useCallback(() => {
     setIsLoggedIn(!!localStorage.getItem("accessToken"));
   }, []);
 
-  // Initialize login state & listen for storage changes
   useEffect(() => {
-    updateLoginStatus();
     window.addEventListener("storage", updateLoginStatus);
     return () => window.removeEventListener("storage", updateLoginStatus);
   }, [updateLoginStatus]);
 
-  // Logout handler
+  // ✅ Logout handler
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
@@ -53,26 +57,27 @@ function App() {
 
   return (
     <Router>
-      {/* Navbar based on login state */}
+      {/* ✅ Navbar */}
       {isLoggedIn ? (
         <NavBarAfterLogin onLogout={handleLogout} />
       ) : (
         <NavBarBeforeLogin />
       )}
 
+      {/* ✅ Main content */}
       <div className="pt-16">
         <Routes>
-          {/* Home page conditional */}
+          {/* Home */}
           <Route
             path="/"
             element={isLoggedIn ? <HomeAfterLogin /> : <HomeBeforeLogin />}
           />
 
-          {/* Authentication */}
+          {/* Auth */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
 
-          {/* Protected routes */}
+          {/* Protected Routes */}
           <Route
             path="/resume-builder"
             element={
@@ -122,10 +127,23 @@ function App() {
             }
           />
 
-          {/* Catch-all redirect */}
+          {/* Catch-all */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>
+
+      {/* ✅ Toast notifications */}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar
+        newestOnTop
+        closeOnClick
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </Router>
   );
 }

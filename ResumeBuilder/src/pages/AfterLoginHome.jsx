@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+
 const Home = () => {
   const navigate = useNavigate();
   const [stats, setStats] = useState({
@@ -64,37 +65,37 @@ const Home = () => {
       skill: "AI/Machine Learning",
       growth: "+45%",
       demand: "Very High",
-      color: "bg-gradient-to-r from-purple-500 to-pink-500",
+      gradient: "from-purple-500 via-pink-500 to-purple-600",
     },
     {
       skill: "React Development",
       growth: "+38%",
       demand: "High",
-      color: "bg-gradient-to-r from-blue-500 to-cyan-500",
+      gradient: "from-blue-500 via-cyan-500 to-blue-600",
     },
     {
       skill: "Data Analysis",
       growth: "+42%",
       demand: "Very High",
-      color: "bg-gradient-to-r from-green-500 to-teal-500",
+      gradient: "from-green-500 via-emerald-500 to-teal-600",
     },
     {
       skill: "Cloud Computing",
       growth: "+35%",
       demand: "High",
-      color: "bg-gradient-to-r from-orange-500 to-red-500",
+      gradient: "from-orange-500 via-red-500 to-pink-600",
     },
     {
       skill: "UI/UX Design",
       growth: "+29%",
       demand: "Medium",
-      color: "bg-gradient-to-r from-indigo-500 to-purple-500",
+      gradient: "from-indigo-500 via-purple-500 to-pink-600",
     },
     {
       skill: "DevOps",
       growth: "+41%",
       demand: "Very High",
-      color: "bg-gradient-to-r from-yellow-500 to-orange-500",
+      gradient: "from-yellow-500 via-orange-500 to-red-600",
     },
   ]);
 
@@ -105,6 +106,7 @@ const Home = () => {
       type: "Tech Giant",
       hiring: "Actively",
       logo: "🔍",
+      gradient: "from-blue-500 to-green-500",
     },
     {
       company: "Microsoft",
@@ -112,6 +114,7 @@ const Home = () => {
       type: "Tech Giant",
       hiring: "Actively",
       logo: "🪟",
+      gradient: "from-blue-600 to-cyan-500",
     },
     {
       company: "Amazon",
@@ -119,6 +122,7 @@ const Home = () => {
       type: "E-commerce",
       hiring: "Rapidly",
       logo: "📦",
+      gradient: "from-orange-500 to-yellow-500",
     },
     {
       company: "Apple",
@@ -126,6 +130,7 @@ const Home = () => {
       type: "Hardware",
       hiring: "Selectively",
       logo: "🍎",
+      gradient: "from-gray-700 to-gray-500",
     },
     {
       company: "Meta",
@@ -133,6 +138,7 @@ const Home = () => {
       type: "Social Media",
       hiring: "Actively",
       logo: "📘",
+      gradient: "from-blue-600 to-purple-600",
     },
     {
       company: "Tesla",
@@ -140,17 +146,9 @@ const Home = () => {
       type: "Automotive",
       hiring: "Rapidly",
       logo: "⚡",
+      gradient: "from-red-600 to-pink-600",
     },
   ]);
-
-  // const [userProgress, setUserProgress] = useState({
-  //   profileCompletion: 75,
-  //   skillsAssessed: 8,
-  //   resumesCreated: 3,
-  //   interviewsScheduled: 2,
-  //   jobApplications: 12,
-  //   networkConnections: 45,
-  // });
 
   // Simulate real-time updates
   useEffect(() => {
@@ -283,49 +281,55 @@ const Home = () => {
       title: "AI-Powered Resume Builder",
       desc: "Create professional resumes with AI assistance and industry-specific templates that adapt to your experience.",
       icon: "🤖",
-      color: "from-purple-500 to-pink-500",
+      gradient: "from-purple-500 via-pink-500 to-purple-600",
       stats: `${stats.templatesAvailable.toLocaleString()}+ templates`,
       badge: "Most Popular",
+      badgeColor: "bg-gradient-to-r from-purple-500 to-pink-500",
     },
     {
       title: "Real-Time Skill Assessment",
       desc: "Take dynamic quizzes that adapt to your responses and discover hidden strengths with personalized recommendations.",
       icon: "⚡",
-      color: "from-blue-500 to-cyan-500",
+      gradient: "from-blue-500 via-cyan-500 to-blue-600",
       stats: "98.7% accuracy",
       badge: "AI Powered",
+      badgeColor: "bg-gradient-to-r from-blue-500 to-cyan-500",
     },
     {
       title: "Live Collaboration Hub",
       desc: "Work with mentors and peers in real-time with instant feedback, suggestions, and career guidance.",
       icon: "👥",
-      color: "from-green-500 to-teal-500",
+      gradient: "from-green-500 via-emerald-500 to-teal-600",
       stats: `${stats.mentorsOnline.toLocaleString()}+ mentors online`,
       badge: "Live Now",
+      badgeColor: "bg-gradient-to-r from-green-500 to-emerald-500",
     },
     {
       title: "Smart Analytics Dashboard",
       desc: "Track resume performance with detailed insights on views, downloads, response rates, and hiring trends.",
       icon: "📊",
-      color: "from-orange-500 to-red-500",
+      gradient: "from-orange-500 via-red-500 to-pink-600",
       stats: "Real-time insights",
       badge: "Advanced",
+      badgeColor: "bg-gradient-to-r from-orange-500 to-red-500",
     },
     {
       title: "Job Market Intelligence",
       desc: "Access live job market data, salary insights, and trending skills to stay ahead of the competition.",
       icon: "🎯",
-      color: "from-indigo-500 to-purple-500",
+      gradient: "from-indigo-500 via-purple-500 to-pink-600",
       stats: `${stats.jobsPosted.toLocaleString()}+ jobs tracked`,
       badge: "Exclusive",
+      badgeColor: "bg-gradient-to-r from-indigo-500 to-purple-500",
     },
     {
       title: "Interview Preparation",
       desc: "Practice with AI-powered mock interviews and get personalized feedback to ace your next interview.",
       icon: "🎤",
-      color: "from-yellow-500 to-orange-500",
+      gradient: "from-yellow-500 via-orange-500 to-red-600",
       stats: `${stats.interviewsScheduled.toLocaleString()}+ interviews scheduled`,
       badge: "Success Boost",
+      badgeColor: "bg-gradient-to-r from-yellow-500 to-orange-500",
     },
   ];
 
@@ -341,14 +345,14 @@ const Home = () => {
   };
 
   const StatCard = ({ label, value, suffix = "" }) => (
-    <div className="bg-card rounded-xl p-6 shadow-soft hover:shadow-medium transition-all duration-300 animate-scale-in">
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-muted-foreground text-sm font-medium">
+    <div className="group bg-card rounded-2xl p-6 shadow-soft hover:shadow-glow transition-all duration-500 animate-scale-in hover-scale cursor-pointer border border-border/50 hover:border-primary/20">
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-muted-foreground text-sm font-medium tracking-wide">
           {label}
         </span>
-        <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
+        <div className="w-2 h-2 bg-success rounded-full animate-pulse-glow"></div>
       </div>
-      <div className="text-2xl font-bold text-foreground">
+      <div className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
         {typeof value === "number" ? Math.floor(value).toLocaleString() : value}
         {suffix}
       </div>
@@ -356,46 +360,59 @@ const Home = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-background">
+    <div className="min-h-screen bg-gradient-to-r from-white via-blue-200 to-blue-200">
       {/* Hero Section */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-primary opacity-10"></div>
-        <div className="relative max-w-7xl mx-auto px-6 py-20">
-          <div className="text-center mb-16 animate-slide-down">
-            <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6 leading-tight">
+        <div className="absolute inset-0 animated-gradient opacity-10"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5"></div>
+        <div className="relative max-w-7xl mx-auto px-6 py-24">
+          <div className="text-center mb-20 animate-slide-down">
+            <div className="inline-block mb-6">
+              <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-gradient-primary text-primary-foreground shadow-glow animate-pulse-glow">
+                🚀 Join 50,000+ professionals worldwide
+              </span>
+            </div>
+            <h1 className="text-6xl md:text-7xl font-bold text-foreground mb-8 leading-tight">
               Build Your Dream Career
-              <span className="block bg-gradient-primary bg-clip-text text-transparent animate-gradient-shift bg-[length:200%_200%]">
+              <span className="block bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent text-6xl md:text-7xl animate-pulse
+">
                 In Real-Time
               </span>
             </h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
+            <p className="text-xl text-muted-foreground max-w-4xl mx-auto mb-12 leading-relaxed">
               Join thousands of professionals using our AI-powered platform to
               create stunning resumes, assess skills, and land their dream jobs
               with real-time collaboration and insights.
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+            <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
               <Link
                 to="/resume-builder"
-                className="bg-gradient-primary text-primary-foreground px-8 py-4 rounded-xl font-semibold text-lg shadow-medium hover:shadow-strong transform hover:scale-105 transition-all duration-300 animate-float"
+                className="group bg-gradient-primary text-primary-foreground px-10 py-5 rounded-2xl font-bold text-xl shadow-strong hover:shadow-glow transform hover-scale transition-all duration-500 animate-float hover-glow"
               >
-                Start Building Now
+                <span className="flex items-center gap-3">
+                  Start Building Now
+                  <span className="group-hover:translate-x-1 transition-transform">→</span>
+                </span>
               </Link>
               <a
                 href="https://youtu.be/9ScqP1qmxFo?si=ul3yLciA0hGyDQ2q"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <button className="bg-card text-foreground border border-border px-8 py-4 rounded-xl font-semibold text-lg shadow-soft hover:shadow-medium transform hover:scale-105 transition-all duration-300">
-                  Watch Demo
+                <button className="group bg-card/80 backdrop-blur-sm text-foreground border-2 border-primary/20 px-10 py-5 rounded-2xl font-bold text-xl shadow-medium hover:shadow-strong transform hover-scale transition-all duration-500 hover:border-primary/40">
+                  <span className="flex items-center gap-3">
+                    <span className="text-2xl">▶️</span>
+                    Watch Demo
+                  </span>
                 </button>
               </a>
             </div>
           </div>
 
           {/* Live Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-20">
             <StatCard label="Active Users" value={stats.activeUsers} />
             <StatCard label="Resumes Created" value={stats.resumesCreated} />
             <StatCard label="Companies Hiring" value={stats.companiesHiring} />
@@ -409,37 +426,49 @@ const Home = () => {
       </section>
 
       {/* Features Section */}
-      <section className="max-w-7xl mx-auto px-6 py-20">
-        <div className="text-center mb-16 animate-slide-up">
-          <h2 className="text-4xl font-bold text-foreground mb-4">
+      <section className="max-w-7xl mx-auto px-6 py-24">
+        <div className="text-center mb-20 animate-slide-up">
+          <h2 className="text-5xl font-bold text-foreground mb-6">
             Powerful Features for Modern Professionals
           </h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             Everything you need to stand out in today's competitive job market,
             powered by cutting-edge AI and real-time collaboration.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
           {features.map((feature, idx) => (
             <div
               key={idx}
-              className="group bg-card rounded-2xl p-8 shadow-soft hover:shadow-strong transition-all duration-500 transform hover:-translate-y-2 animate-scale-in cursor-pointer"
+              className="group bg-card rounded-3xl p-8 shadow-soft hover:shadow-glow transition-all duration-700 transform hover-scale animate-scale-in cursor-pointer border border-border/50 hover:border-primary/30 relative overflow-hidden"
               style={{ animationDelay: `${idx * 100}ms` }}
             >
+              <div className="absolute top-4 right-4">
+                <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold text-white ${feature.badgeColor} shadow-medium`}>
+                  {feature.badge}
+                </span>
+              </div>
+              
               <div
-                className={`w-16 h-16 bg-gradient-to-br ${feature.color} rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform duration-300`}
+                className={`w-20 h-20 bg-gradient-to-br ${feature.gradient} rounded-3xl flex items-center justify-center text-3xl mb-8 group-hover:scale-110 transition-transform duration-500 shadow-medium group-hover:shadow-glow`}
               >
                 {feature.icon}
               </div>
-              <h3 className="text-xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
+              
+              <h3 className="text-2xl font-bold text-foreground mb-4 group-hover:bg-gradient-primary group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
                 {feature.title}
               </h3>
-              <p className="text-muted-foreground mb-4 leading-relaxed">
+              
+              <p className="text-muted-foreground mb-6 leading-relaxed text-lg">
                 {feature.desc}
               </p>
-              <div className="text-sm font-semibold text-accent">
-                {feature.stats}
+              
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
+                  {feature.stats}
+                </span>
+                <div className="w-2 h-2 bg-success rounded-full animate-pulse-glow"></div>
               </div>
             </div>
           ))}
@@ -447,32 +476,32 @@ const Home = () => {
       </section>
 
       {/* Real-Time Activity Feed */}
-      <section className="max-w-7xl mx-auto px-6 py-20">
+      <section className="max-w-7xl mx-auto px-6 py-24">
         {/* Live Notifications Banner */}
         {notifications.length > 0 && (
-          <div className="mb-12 animate-slide-down">
-            <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4 rounded-xl shadow-lg relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-gradient-shift bg-[length:200%_200%]"></div>
+          <div className="mb-16 animate-slide-down">
+            <div className="bg-gradient-to-r from-primary via-primary-glow to-primary text-primary-foreground p-6 rounded-3xl shadow-glow relative overflow-hidden">
+              <div className="absolute inset-0 animated-gradient opacity-20"></div>
               <div className="relative flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
-                  <span className="font-semibold">{notifications[0]}</span>
+                <div className="flex items-center gap-4">
+                  <div className="w-4 h-4 bg-white rounded-full animate-pulse-glow"></div>
+                  <span className="font-bold text-lg">{notifications[0]}</span>
                 </div>
-                <span className="text-sm text-white/80">Live Update</span>
+                <span className="text-sm text-white/90 font-medium">Live Update</span>
               </div>
             </div>
           </div>
         )}
 
-        <div className="grid lg:grid-cols-3 gap-12 items-start">
+        <div className="grid lg:grid-cols-3 gap-16 items-start">
           {/* Live Activity Feed */}
           <div className="lg:col-span-2">
-            <div className="animate-slide-up mb-8">
-              <h3 className="text-3xl font-bold text-foreground mb-4 flex items-center gap-3">
-                <span className="text-2xl">🌐</span>
+            <div className="animate-slide-up mb-10">
+              <h3 className="text-4xl font-bold text-foreground mb-6 flex items-center gap-4">
+                <span className="text-3xl">🌐</span>
                 {getGreeting()}, See What's Happening Live
               </h3>
-              <p className="text-lg text-muted-foreground">
+              <p className="text-xl text-muted-foreground leading-relaxed">
                 Join a thriving community of{" "}
                 {stats.activeUsers.toLocaleString()}+ professionals achieving
                 their career goals every day. Watch real-time updates from users
@@ -480,50 +509,50 @@ const Home = () => {
               </p>
             </div>
 
-            <div className="bg-card rounded-2xl p-6 shadow-medium animate-slide-up">
-              <div className="flex items-center justify-between mb-6">
-                <h4 className="text-lg font-semibold text-foreground flex items-center gap-2">
-                  <span className="text-lg">🚀</span>
+            <div className="bg-card rounded-3xl p-8 shadow-medium animate-slide-up border border-border/50">
+              <div className="flex items-center justify-between mb-8">
+                <h4 className="text-2xl font-bold text-foreground flex items-center gap-3">
+                  <span className="text-2xl">🚀</span>
                   Global Activity Feed
                 </h4>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
-                  <span className="text-sm text-success font-medium">
+                <div className="flex items-center gap-3">
+                  <div className="w-3 h-3 bg-success rounded-full animate-pulse-glow"></div>
+                  <span className="text-sm text-success font-bold bg-success/10 px-3 py-1 rounded-full">
                     Live - {currentTime.toLocaleTimeString()}
                   </span>
                 </div>
               </div>
 
-              <div className="space-y-4 max-h-96 overflow-y-auto">
+              <div className="space-y-6 max-h-96 overflow-y-auto">
                 {activities.map((activity, idx) => (
                   <div
                     key={`${activity.user}-${activity.time}-${idx}`}
-                    className="flex items-start gap-4 p-4 rounded-xl hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-blue-900/20 dark:hover:to-purple-900/20 transition-all duration-300 animate-fade-in border border-transparent hover:border-blue-200 dark:hover:border-blue-800"
+                    className="group flex items-start gap-6 p-6 rounded-2xl hover:bg-gradient-to-r hover:from-primary/5 hover:to-primary-glow/5 transition-all duration-500 animate-fade-in border border-transparent hover:border-primary/20 hover:shadow-soft cursor-pointer"
                     style={{ animationDelay: `${idx * 100}ms` }}
                   >
-                    <div className="text-2xl">{activity.avatar}</div>
+                    <div className="text-3xl group-hover:scale-110 transition-transform duration-300">{activity.avatar}</div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-lg">
+                      <div className="flex items-center gap-3 mb-2">
+                        <span className="text-xl group-hover:scale-110 transition-transform duration-300">
                           {getActivityIcon(activity.type)}
                         </span>
-                        <span className="font-semibold text-foreground">
+                        <span className="font-bold text-foreground text-lg">
                           {activity.user}
                         </span>
-                        <span className="text-xs bg-muted text-muted-foreground px-2 py-1 rounded-full">
+                        <span className="text-xs bg-muted text-muted-foreground px-3 py-1 rounded-full font-medium">
                           {activity.location}
                         </span>
                       </div>
-                      <p className="text-sm text-muted-foreground mb-2">
+                      <p className="text-muted-foreground mb-3 text-lg">
                         {activity.action}
                       </p>
                       <div className="flex items-center justify-between">
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-sm text-muted-foreground font-medium">
                           {activity.time}
                         </span>
-                        <div className="flex items-center gap-1">
-                          <div className="w-1 h-1 bg-success rounded-full animate-pulse"></div>
-                          <span className="text-xs text-success">Active</span>
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-success rounded-full animate-pulse-glow"></div>
+                          <span className="text-sm text-success font-bold">Active</span>
                         </div>
                       </div>
                     </div>
@@ -534,46 +563,46 @@ const Home = () => {
           </div>
 
           {/* Live Stats Sidebar */}
-          <div className="space-y-6">
+          <div className="space-y-8">
             {/* Quick Stats */}
-            <div className="bg-card rounded-2xl p-6 shadow-medium animate-scale-in">
-              <h4 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-                <span className="text-lg">📊</span>
+            <div className="bg-card rounded-3xl p-8 shadow-medium animate-scale-in border border-border/50">
+              <h4 className="text-xl font-bold text-foreground mb-6 flex items-center gap-3">
+                <span className="text-xl">📊</span>
                 Live Platform Stats
               </h4>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">
+              <div className="space-y-6">
+                <div className="flex justify-between items-center p-3 rounded-xl hover:bg-muted/50 transition-colors cursor-pointer">
+                  <span className="text-muted-foreground font-medium">
                     Templates Used
                   </span>
-                  <span className="font-bold text-primary">
+                  <span className="font-bold text-primary text-lg">
                     {stats.templatesAvailable.toLocaleString()}
                   </span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">
+                <div className="flex justify-between items-center p-3 rounded-xl hover:bg-muted/50 transition-colors cursor-pointer">
+                  <span className="text-muted-foreground font-medium">
                     Mentors Online
                   </span>
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                    <span className="font-bold text-green-600">
+                  <div className="flex items-center gap-3">
+                    <div className="w-3 h-3 bg-success rounded-full animate-pulse-glow"></div>
+                    <span className="font-bold text-success text-lg">
                       {stats.mentorsOnline.toLocaleString()}
                     </span>
                   </div>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">
+                <div className="flex justify-between items-center p-3 rounded-xl hover:bg-muted/50 transition-colors cursor-pointer">
+                  <span className="text-muted-foreground font-medium">
                     Jobs Posted Today
                   </span>
-                  <span className="font-bold text-blue-600">
+                  <span className="font-bold text-primary text-lg">
                     {stats.jobsPosted.toLocaleString()}
                   </span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">
+                <div className="flex justify-between items-center p-3 rounded-xl hover:bg-muted/50 transition-colors cursor-pointer">
+                  <span className="text-muted-foreground font-medium">
                     Interviews This Week
                   </span>
-                  <span className="font-bold text-purple-600">
+                  <span className="font-bold text-primary text-lg">
                     {stats.interviewsScheduled.toLocaleString()}
                   </span>
                 </div>
@@ -581,33 +610,33 @@ const Home = () => {
             </div>
 
             {/* Success Indicators */}
-            <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-2xl p-6 shadow-medium animate-scale-in border border-green-200 dark:border-green-800">
-              <h4 className="text-lg font-bold text-green-800 dark:text-green-200 mb-4 flex items-center gap-2">
-                <span className="text-lg">🎯</span>
+            <div className="bg-gradient-to-br from-success/10 via-success/5 to-transparent rounded-3xl p-8 shadow-medium animate-scale-in border border-success/20">
+              <h4 className="text-xl font-bold text-success mb-6 flex items-center gap-3">
+                <span className="text-xl">🎯</span>
                 Success Indicators
               </h4>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="text-sm text-green-700 dark:text-green-300 font-medium">
+              <div className="space-y-4">
+                <div className="flex items-center gap-4 p-3 rounded-xl hover:bg-success/5 transition-colors cursor-pointer">
+                  <div className="w-4 h-4 bg-success rounded-full animate-pulse-glow"></div>
+                  <span className="text-success font-bold">
                     {stats.successRate.toFixed(1)}% Interview Success Rate
                   </span>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4 p-3 rounded-xl hover:bg-success/5 transition-colors cursor-pointer">
                   <div
-                    className="w-3 h-3 bg-green-500 rounded-full animate-pulse"
+                    className="w-4 h-4 bg-success rounded-full animate-pulse-glow"
                     style={{ animationDelay: "0.5s" }}
                   ></div>
-                  <span className="text-sm text-green-700 dark:text-green-300 font-medium">
+                  <span className="text-success font-bold">
                     97.2% User Satisfaction
                   </span>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4 p-3 rounded-xl hover:bg-success/5 transition-colors cursor-pointer">
                   <div
-                    className="w-3 h-3 bg-green-500 rounded-full animate-pulse"
+                    className="w-4 h-4 bg-success rounded-full animate-pulse-glow"
                     style={{ animationDelay: "1s" }}
                   ></div>
-                  <span className="text-sm text-green-700 dark:text-green-300 font-medium">
+                  <span className="text-success font-bold">
                     4.9⭐ Average Rating
                   </span>
                 </div>
@@ -618,57 +647,57 @@ const Home = () => {
       </section>
 
       {/* Trending Skills Section */}
-      <section className="bg-white from-purple-50 via-blue-50 to-indigo-50 dark:from-purple-900/20 dark:via-blue-900/20 dark:to-indigo-900/20 py-20">
+      <section className="bg-gradient-to-br from-muted/30 via-transparent to-accent/10 py-24">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16 animate-slide-up">
-            <h2 className="text-4xl font-bold text-foreground mb-4 flex items-center justify-center gap-3">
-              <span className="text-3xl">🔥</span>
+          <div className="text-center mb-20 animate-slide-up">
+            <h2 className="text-5xl font-bold text-foreground mb-6 flex items-center justify-center gap-4">
+              <span className="text-4xl">🔥</span>
               Trending Skills & Market Intelligence
             </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-4xl mx-auto">
               Stay ahead of the curve with real-time skill demand data and
               market insights powered by AI analysis of millions of job
               postings.
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="grid lg:grid-cols-3 gap-12">
             {/* Trending Skills */}
             <div className="lg:col-span-2">
-              <div className="bg-card rounded-2xl p-6 shadow-medium animate-scale-in">
-                <h3 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">
-                  <span className="text-lg">📈</span>
+              <div className="bg-card rounded-3xl p-8 shadow-medium animate-scale-in border border-border/50">
+                <h3 className="text-2xl font-bold text-foreground mb-8 flex items-center gap-3">
+                  <span className="text-2xl">📈</span>
                   Hottest Skills This Week
                 </h3>
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid md:grid-cols-2 gap-6">
                   {trendingSkills.map((skill, idx) => (
                     <div
                       key={skill.skill}
-                      className="group p-4 rounded-xl bg-gradient-to-r hover:from-white hover:to-gray-50 dark:hover:from-gray-800 dark:hover:to-gray-900 border border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-600 transition-all duration-300 cursor-pointer transform hover:scale-105"
+                      className="group p-6 rounded-2xl bg-gradient-to-br from-card to-muted/20 border border-border/50 hover:border-primary/30 transition-all duration-500 cursor-pointer transform hover-scale hover:shadow-soft"
                       style={{ animationDelay: `${idx * 150}ms` }}
                     >
-                      <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center justify-between mb-4">
                         <div
-                          className={`w-4 h-4 rounded-full ${skill.color}`}
+                          className={`w-6 h-6 rounded-full bg-gradient-to-r ${skill.gradient} shadow-medium`}
                         ></div>
-                        <span className="text-sm font-bold text-green-600 bg-green-100 dark:bg-green-900/30 px-2 py-1 rounded-full">
+                        <span className="text-sm font-bold text-success bg-success/10 px-3 py-1 rounded-full">
                           {skill.growth}
                         </span>
                       </div>
-                      <h4 className="font-bold text-foreground mb-1 group-hover:text-purple-600 transition-colors">
+                      <h4 className="font-bold text-foreground mb-2 text-lg group-hover:bg-gradient-primary group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
                         {skill.skill}
                       </h4>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-muted-foreground">
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm text-muted-foreground font-medium">
                           Demand:
                         </span>
                         <span
-                          className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                          className={`text-xs font-bold px-3 py-1 rounded-full ${
                             skill.demand === "Very High"
-                              ? "bg-red-100 text-red-700 dark:bg-red-900/30"
+                              ? "bg-destructive/10 text-destructive"
                               : skill.demand === "High"
-                              ? "bg-orange-100 text-orange-700 dark:bg-orange-900/30"
-                              : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30"
+                              ? "bg-warning/10 text-warning"
+                              : "bg-muted text-muted-foreground"
                           }`}
                         >
                           {skill.demand}
@@ -681,52 +710,52 @@ const Home = () => {
             </div>
 
             {/* Market Summary */}
-            <div className="space-y-6">
-              <div className="bg-card rounded-2xl p-6 shadow-medium animate-scale-in">
-                <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-                  <span className="text-lg">🌟</span>
+            <div className="space-y-8">
+              <div className="bg-card rounded-3xl p-8 shadow-medium animate-scale-in border border-border/50">
+                <h3 className="text-xl font-bold text-foreground mb-6 flex items-center gap-3">
+                  <span className="text-xl">🌟</span>
                   Market Summary
                 </h3>
-                <div className="space-y-4">
-                  <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                    <div className="text-sm text-blue-600 font-medium">
+                <div className="space-y-6">
+                  <div className="p-4 bg-gradient-to-br from-primary/10 to-primary-glow/5 rounded-2xl border border-primary/20">
+                    <div className="text-sm text-primary font-bold mb-1">
                       Most In-Demand
                     </div>
-                    <div className="text-lg font-bold text-blue-800 dark:text-blue-200">
+                    <div className="text-lg font-bold text-foreground">
                       AI & Machine Learning
                     </div>
                   </div>
-                  <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                    <div className="text-sm text-green-600 font-medium">
+                  <div className="p-4 bg-gradient-to-br from-success/10 to-success/5 rounded-2xl border border-success/20">
+                    <div className="text-sm text-success font-bold mb-1">
                       Highest Growth
                     </div>
-                    <div className="text-lg font-bold text-green-800 dark:text-green-200">
+                    <div className="text-lg font-bold text-foreground">
                       Data Analysis
                     </div>
                   </div>
-                  <div className="p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-                    <div className="text-sm text-purple-600 font-medium">
+                  <div className="p-4 bg-gradient-to-br from-warning/10 to-warning/5 rounded-2xl border border-warning/20">
+                    <div className="text-sm text-warning font-bold mb-1">
                       Emerging Field
                     </div>
-                    <div className="text-lg font-bold text-purple-800 dark:text-purple-200">
+                    <div className="text-lg font-bold text-foreground">
                       DevOps Engineering
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-2xl p-6 shadow-medium animate-scale-in border border-yellow-200 dark:border-yellow-800">
-                <h3 className="text-lg font-bold text-orange-800 dark:text-orange-200 mb-3 flex items-center gap-2">
-                  <span className="text-lg">⚡</span>
+              <div className="bg-gradient-to-br from-warning/20 via-warning/10 to-warning/5 rounded-3xl p-8 shadow-medium animate-scale-in border border-warning/30">
+                <h3 className="text-xl font-bold text-foreground mb-4 flex items-center gap-3">
+                  <span className="text-xl">⚡</span>
                   Quick Action
                 </h3>
-                <p className="text-sm text-orange-700 dark:text-orange-300 mb-4">
+                <p className="text-muted-foreground mb-6 leading-relaxed">
                   Start learning AI skills now and increase your job prospects
                   by 45%!
                 </p>
                 <button
                   onClick={() => navigate("/ai")}
-                  className="w-full bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-lg font-semibold transform hover:scale-105 transition-all duration-200"
+                  className="w-full bg-gradient-to-r from-warning to-warning/80 text-warning-foreground py-4 px-6 rounded-2xl font-bold transform hover-scale transition-all duration-300 hover:shadow-glow"
                 >
                   Start AI Assessment
                 </button>
@@ -737,13 +766,13 @@ const Home = () => {
       </section>
 
       {/* Job Market Intelligence */}
-      <section className="max-w-7xl mx-auto px-6 py-20">
-        <div className="text-center mb-16 animate-slide-up">
-          <h2 className="text-4xl font-bold text-foreground mb-4 flex items-center justify-center gap-3">
-            <span className="text-3xl">💼</span>
+      <section className="max-w-7xl mx-auto px-6 py-24">
+        <div className="text-center mb-20 animate-slide-up">
+          <h2 className="text-5xl font-bold text-foreground mb-6 flex items-center justify-center gap-4">
+            <span className="text-4xl">💼</span>
             Live Job Market Intelligence
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-4xl mx-auto">
             Real-time insights from top companies actively hiring. Updated every
             minute with fresh opportunities and hiring trends.
           </p>
@@ -753,44 +782,47 @@ const Home = () => {
           {jobMarketData.map((company, idx) => (
             <div
               key={company.company}
-              className="group bg-card rounded-2xl p-6 shadow-soft hover:shadow-strong transition-all duration-500 animate-scale-in cursor-pointer transform hover:-translate-y-1"
+              className="group bg-card rounded-3xl p-8 shadow-soft hover:shadow-glow transition-all duration-700 animate-scale-in cursor-pointer transform hover-scale border border-border/50 hover:border-primary/30 relative overflow-hidden"
               style={{ animationDelay: `${idx * 100}ms` }}
             >
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center gap-4">
-                  <div className="text-4xl">{company.logo}</div>
-                  <div>
-                    <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors">
-                      {company.company}
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      {company.type}
-                    </p>
-                  </div>
-                </div>
+              <div className="absolute top-6 right-6">
                 <div
-                  className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                  className={`px-4 py-2 rounded-full text-sm font-bold text-white shadow-medium ${
                     company.hiring === "Rapidly"
-                      ? "bg-red-100 text-red-700 dark:bg-red-900/30"
+                      ? "bg-gradient-to-r from-destructive to-destructive/80"
                       : company.hiring === "Actively"
-                      ? "bg-green-100 text-green-700 dark:bg-green-900/30"
-                      : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30"
+                      ? "bg-gradient-to-r from-success to-success/80"
+                      : "bg-gradient-to-r from-warning to-warning/80"
                   }`}
                 >
                   {company.hiring}
                 </div>
               </div>
+              
+              <div className="flex items-start gap-6 mb-6">
+                <div className={`text-5xl p-4 rounded-2xl bg-gradient-to-br ${company.gradient} shadow-medium group-hover:scale-110 transition-all duration-500`}>
+                  {company.logo}
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-foreground group-hover:bg-gradient-primary group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
+                    {company.company}
+                  </h3>
+                  <p className="text-muted-foreground font-medium text-lg">
+                    {company.type}
+                  </p>
+                </div>
+              </div>
 
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="text-2xl font-bold text-primary">
+                  <span className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent">
                     {company.openings.toLocaleString()}
                   </span>
-                  <span className="text-muted-foreground ml-2">
+                  <span className="text-muted-foreground ml-3 text-lg">
                     open positions
                   </span>
                 </div>
-                <button className="bg-primary text-primary-foreground px-4 py-2 rounded-lg font-semibold hover:bg-primary/90 transform hover:scale-105 transition-all duration-200">
+                <button className="bg-gradient-primary text-primary-foreground px-6 py-3 rounded-2xl font-bold hover:shadow-glow transform hover-scale transition-all duration-300">
                   View Jobs
                 </button>
               </div>
@@ -800,12 +832,13 @@ const Home = () => {
       </section>
 
       {/* Final CTA Section */}
-      <section className="bg-gradient-secondary py-20">
-        <div className="max-w-4xl mx-auto text-center px-6 animate-scale-in">
-          <h3 className="text-4xl font-bold text-black mb-6">
+      <section className="bg-gradient-secondary py-24 relative overflow-hidden">
+        <div className="absolute inset-0 animated-gradient opacity-20"></div>
+        <div className="relative max-w-5xl mx-auto text-center px-6 animate-scale-in">
+          <h3 className="text-5xl font-bold text-foreground mb-8">
             Ready to Transform Your Career?
           </h3>
-          <p className="text-xl text-black/80 mb-8 max-w-2xl mx-auto">
+          <p className="text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed">
             Join thousands of professionals who have already accelerated their
             careers with our AI-powered platform and real-time collaboration
             tools.
@@ -813,12 +846,12 @@ const Home = () => {
 
           <Link
             to="/resume-builder"
-            className="inline-block bg-white text-primary px-10 py-4 rounded-xl font-bold text-lg shadow-strong hover:shadow-medium transform hover:scale-105 transition-all duration-300 animate-float"
+            className="inline-block bg-card/90 backdrop-blur-sm text-foreground px-12 py-6 rounded-3xl font-bold text-2xl shadow-strong hover:shadow-glow transform hover-scale transition-all duration-500 animate-float hover-glow border-2 border-primary/20 hover:border-primary/40"
           >
             Get Started Free Today
           </Link>
 
-          <p className="text-black/60 text-sm mt-4">
+          <p className="text-muted-foreground text-lg mt-6">
             No credit card required • Start building in under 60 seconds
           </p>
         </div>
