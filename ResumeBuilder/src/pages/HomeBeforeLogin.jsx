@@ -155,7 +155,7 @@ const stats = [
 ];
 
 export default function Home() {
-   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [isVisible, setIsVisible] = useState({});
 
@@ -288,25 +288,17 @@ export default function Home() {
                   />
                 </svg>
               </Link>
-              <Link
-                to="/demo"
-                className="border-2 border-emerald-500 text-emerald-600 px-8 py-4 rounded-full font-semibold text-lg hover:bg-emerald-50 transition-all flex items-center justify-center space-x-2"
+              <a
+                href="https://youtu.be/9ScqP1qmxFo?si=ul3yLciA0hGyDQ2q"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group bg-card/80 backdrop-blur-sm text-foreground border-2 border-primary/20 px-10 py-5 rounded-2xl font-bold text-xl shadow-medium hover:shadow-strong transform hover:scale-105 transition-all duration-500 hover:border-primary/40 inline-block"
               >
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.01M15 10h1.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                <span>Watch Demo</span>
-              </Link>
+                <span className="flex items-center gap-3">
+                  <span className="text-2xl">▶️</span>
+                  Watch Demo
+                </span>
+              </a>
             </div>
 
             <div className="flex items-center space-x-6 text-sm text-gray-500">

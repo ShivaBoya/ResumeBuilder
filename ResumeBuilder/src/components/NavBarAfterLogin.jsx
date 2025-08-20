@@ -11,16 +11,15 @@ import {
   HiOutlineBadgeCheck,
   HiUserCircle,
 } from "react-icons/hi";
-import CopilotWidget from "../pages/CopilotWidget"; // ✅ Import CopilotWidget
+import CopilotWidget from "../pages/CopilotWidget"; 
 
 function NavBarAfterLogin({ onLogout }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [isCopilotOpen, setIsCopilotOpen] = useState(false); // ✅ State for Copilot Widget
+  const [isCopilotOpen, setIsCopilotOpen] = useState(false); 
 
-  // Get username from localStorage
   let username = "User";
   const storedUser = localStorage.getItem("user");
   if (storedUser) {
