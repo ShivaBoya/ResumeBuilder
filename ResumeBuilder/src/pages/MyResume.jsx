@@ -5,40 +5,62 @@ import jsPDF from "jspdf";
 import { toPng } from "html-to-image";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-const BASE_URL = "https://fullstackbakend-8.onrender.com";
+import { Plus, FileText, Trash2, Edit, Download, Send, Calendar } from "lucide-react";
+import { BASE_URL } from "../utils/contants";
+import ResumeRenderer from "../components/Renderer/ResumeRenderer";
 
 const MyResume = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("accessToken");
   const refreshToken = localStorage.getItem("refreshToken");
 
-  const [resume, setResume] = useState(null);
+  const [resumes, setResumes] = useState([]);
+  const [selectedResume, setSelectedResume] = useState(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isSending, setIsSending] = useState(false);
+  const [loading, setLoading] = useState(true);
 
+  // Metadata State
+  const [metadata, setMetadata] = useState({
+    templates: {},
+    themes: {}
+  });
+
+  // Fetch all data
   useEffect(() => {
-    const fetchResume = async () => {
+    const fetchData = async () => {
       try {
-        const res = await axios.get(`${BASE_URL}/resume/getresume`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            RefreshToken: `Refresh ${refreshToken}`,
-          },
+        const [resumesRes, templatesRes, themesRes] = await Promise.all([
+          axios.get(`${BASE_URL}/Resume/myresumes`, { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get(`${BASE_URL}/users/config/templates`, { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get(`${BASE_URL}/users/config/themes`, { headers: { Authorization: `Bearer ${token}` } })
+        ]);
+
+        const fetchedResumes = resumesRes.data.resumes || [];
+        setResumes(fetchedResumes);
+        if (fetchedResumes.length > 0) {
+          setSelectedResume(fetchedResumes[0]);
+        }
+
+        setMetadata({
+          templates: templatesRes.data || {},
+          themes: themesRes.data || {}
         });
-        setResume(res.data.resume);
+
       } catch (err) {
         console.error(err);
-        toast.error(" Failed to fetch resume!");
+        toast.error("Failed to load data.");
+      } finally {
+        setLoading(false);
       }
     };
-    fetchResume();
+    if (token) fetchData();
   }, [token, refreshToken]);
 
   const handleDownloadPDF = async () => {
-    if (!resume) return;
+    if (!selectedResume) return;
 
-    if (resume.hasDownloadedResume) {
+    if (selectedResume.hasDownloadedResume) {
       toast.info("⚠ You have already downloaded once. Redirecting to premium...");
       setTimeout(() => navigate("/premium"), 2000);
       return;
@@ -58,25 +80,33 @@ const MyResume = () => {
 
       const pdf = new jsPDF("p", "mm", "a4");
       const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
 
       const img = new Image();
       img.src = imgData;
 
       img.onload = async () => {
         const imgHeight = (img.height * pdfWidth) / img.width;
-        pdf.addImage(img, "PNG", 0, 0, pdfWidth, imgHeight);
-        pdf.save("resume.pdf");
 
-        // Notify backend that user has downloaded
+        let heightLeft = imgHeight;
+        let position = 0;
+
+        pdf.addImage(img, "PNG", 0, position, pdfWidth, imgHeight);
+        heightLeft -= pdfHeight;
+
+        while (heightLeft >= 0) {
+          position = heightLeft - imgHeight;
+          pdf.addPage();
+          pdf.addImage(img, "PNG", 0, position, pdfWidth, imgHeight);
+          heightLeft -= pdfHeight;
+        }
+
+        pdf.save(`${selectedResume.meta?.title || "resume"}.pdf`);
+
         await axios.post(
           `${BASE_URL}/resume/markDownloaded`,
           {},
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              RefreshToken: `Refresh ${refreshToken}`,
-            },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
 
         toast.success("Resume downloaded successfully!");
@@ -90,152 +120,176 @@ const MyResume = () => {
   };
 
   const handleSendEmail = async () => {
+    if (!selectedResume) return;
     setIsSending(true);
     try {
-      await axios.get(`${BASE_URL}/resume/send`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          RefreshToken: `Refresh ${refreshToken}`,
-        },
+      await axios.get(`${BASE_URL}/Resume/send/email?id=${selectedResume._id}`, {
+        headers: { Authorization: `Bearer ${token}` }
       });
       toast.success("📧 Resume sent via email successfully!");
     } catch (err) {
       console.error("Error sending resume email:", err);
-      toast.error(
-        err.response?.data?.message || " Failed to send resume via email"
-      );
+      toast.error(err.response?.data?.message || "Failed to send resume via email");
     } finally {
       setIsSending(false);
     }
   };
 
-  if (!resume) return <div className="text-center mt-10">Loading...</div>;
+  const handleDelete = async (resumeId, e) => {
+    e.stopPropagation();
+    if (!window.confirm("Are you sure you want to delete this resume?")) return;
+
+    try {
+      await axios.delete(`${BASE_URL}/Resume/delete/${resumeId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      const updatedList = resumes.filter(r => r._id !== resumeId);
+      setResumes(updatedList);
+
+      if (selectedResume?._id === resumeId) {
+        setSelectedResume(updatedList.length > 0 ? updatedList[0] : null);
+      }
+      toast.success("Resume deleted.");
+    } catch (err) {
+      toast.error("Failed to delete resume.");
+    }
+  };
+
+  if (loading)
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 animate-gradient-xy">
+        <div className="glass-card p-8 text-white text-xl font-bold animate-pulse">
+          Loading your profiles...
+        </div>
+      </div>
+    );
 
   return (
-    <div className="max-w-5xl mx-auto p-6 space-y-6">
-      {/* Resume Preview */}
-      <div
-        id="resume-preview"
-        className="bg-white shadow-xl border rounded-lg p-8 text-gray-900 font-serif"
-        style={{ lineHeight: "1.6" }}
-      >
-        <h1 className="text-3xl text-center font-bold text-green-800 mb-2">
-          {resume.personalInfo.name}
-        </h1>
-        <div className="text-center text-sm text-gray-700 border-t border-b py-2 mb-4">
-          <span>{resume.personalInfo.phone} | </span>
-          <span>{resume.personalInfo.email} | </span>
-          {resume.personalInfo.linkedin && <span>LinkedIn | </span>}
-          {resume.personalInfo.github && <span>GitHub</span>}
-        </div>
+    <div className="min-h-screen bg-background text-foreground transition-colors duration-300 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row gap-8">
 
-        {resume.coverLetter?.content && (
-          <div className="mb-4">
-            <h2 className="text-green-700 font-bold text-lg mb-1">Summary</h2>
-            <p className="text-justify">{resume.coverLetter.content}</p>
-          </div>
-        )}
+          {/* Left Panel: Resume List */}
+          <div className="md:w-1/3">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white">My Resumes</h2>
+              <button
+                onClick={() => navigate('/templates')}
+                className="bg-blue-600 hover:bg-blue-700 text-white rounded-full p-2 shadow-lg hover:shadow-blue-500/50 transition-all"
+                title="Create New Resume"
+              >
+                <Plus size={24} />
+              </button>
+            </div>
 
-        {resume.skills?.length > 0 && (
-          <div className="mb-4">
-            <h2 className="text-green-700 font-bold text-lg mb-1">Skills</h2>
-            <ul className="list-disc ml-6">
-              {resume.skills.map((skill, idx) => (
-                <li key={idx}>{skill}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {/* ✅ Work Experience Section */}
-        {resume.workExperience?.length > 0 && (
-          <div className="mb-4">
-            <h2 className="text-green-700 font-bold text-lg mb-1">
-              Work Experience
-            </h2>
-            {[...resume.workExperience]
-              .sort(
-                (a, b) =>
-                  new Date(b.endDate || Date.now()) -
-                  new Date(a.endDate || Date.now())
-              )
-              .map((exp, idx) => (
-                <div key={idx} className="mb-2">
-                  <p>
-                    <strong>{exp.position}</strong> at {exp.company}
-                  </p>
-                  <p className="text-sm">
-                    {exp.startDate} - {exp.endDate || "Present"}
-                  </p>
-                  {exp.description && (
-                    <p className="text-justify text-sm">{exp.description}</p>
-                  )}
+            <div className="space-y-4 max-h-[80vh] overflow-y-auto pr-2 custom-scrollbar">
+              {resumes.length === 0 ? (
+                <div className="text-center p-8 glass-card border-dashed border-2 border-gray-300">
+                  <p className="text-gray-500 dark:text-gray-400 mb-4">No resumes yet.</p>
+                  <button
+                    onClick={() => navigate('/templates')}
+                    className="text-blue-600 font-bold hover:underline"
+                  >
+                    Create your first one!
+                  </button>
                 </div>
-              ))}
+              ) : (
+                resumes.map((resume) => (
+                  <div
+                    key={resume._id}
+                    onClick={() => setSelectedResume(resume)}
+                    className={`p-4 rounded-xl cursor-pointer transition-all border ${selectedResume?._id === resume._id
+                      ? "bg-white dark:bg-slate-800 border-blue-500 shadow-lg ring-2 ring-blue-500/20"
+                      : "bg-white/50 dark:bg-slate-800/50 border-transparent hover:bg-white hover:shadow-md hover:shadow-indigo-500/10"
+                      }`}
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="font-bold text-gray-900 dark:text-white truncate max-w-[150px]">
+                          {/* Robust Name Fallback */}
+                          {resume.sectionsData?.personal?.fullName || resume.meta?.title || "Untitled"}
+                        </h3>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-1">
+                          <Calendar size={12} />
+                          Updated: {new Date(resume.updatedAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <button
+                        onClick={(e) => handleDelete(resume._id, e)}
+                        className="text-gray-400 hover:text-red-500 transition-colors p-1"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
-        )}
 
-        {resume.education?.length > 0 && (
-          <div className="mb-4">
-            <h2 className="text-green-700 font-bold text-lg mb-1">Education</h2>
-            {resume.education.map((edu, idx) => (
-              <p key={idx} className="mb-1">
-                <strong>{edu.institution}</strong> - {edu.degree} (
-                {edu.startDate} - {edu.endDate}) | CGPA: {edu.grade}
-              </p>
-            ))}
-          </div>
-        )}
+          {/* Right Panel: Selected Resume Preview & Actions */}
+          <div className="md:w-2/3">
+            {selectedResume ? (
+              <div className="space-y-6">
+                {/* Action Bar */}
+                <div className="flex flex-wrap gap-4 glass-card p-4 rounded-xl items-center justify-between">
+                  <div>
+                    <h2 className="font-bold text-xl text-slate-900 dark:text-white">
+                      {selectedResume.sectionsData?.personal?.fullName || selectedResume.meta?.title || "My Resume"}
+                    </h2>
+                  </div>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => navigate(`/resume-builder/${selectedResume._id}`)}
+                      className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium shadow transition-all"
+                    >
+                      <Edit size={18} /> Edit
+                    </button>
+                    <button
+                      onClick={handleDownloadPDF}
+                      disabled={isDownloading}
+                      className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-medium shadow transition-all disabled:opacity-50"
+                    >
+                      <Download size={18} /> {isDownloading ? "..." : "PDF"}
+                    </button>
+                    <button
+                      onClick={handleSendEmail}
+                      disabled={isSending}
+                      className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium shadow transition-all disabled:opacity-50"
+                    >
+                      <Send size={18} /> Email
+                    </button>
+                  </div>
+                </div>
 
-        {resume.projects?.length > 0 && (
-          <div>
-            <h2 className="text-green-700 font-bold text-lg mb-1">Projects</h2>
-            {resume.projects.map((proj, idx) => (
-              <div key={idx} className="mb-2">
-                <p>
-                  <strong>{proj.title}</strong>: {proj.description}
-                </p>
-                {proj.techStack?.length > 0 && (
-                  <p className="text-sm">
-                    TechStack: {proj.techStack.join(", ")}
-                  </p>
-                )}
+                {/* Preview Area */}
+                <div className="glass-card p-4 sm:p-8 bg-white rounded-xl shadow-2xl relative overflow-hidden min-h-[600px] flex justify-center">
+                  <div className="w-full max-w-[210mm] relative bg-white shadow-lg" id="resume-preview">
+                    <ResumeRenderer
+                      templateId={selectedResume.templateId}
+                      themeId={selectedResume.themeId}
+                      data={selectedResume}
+                      templatesConfig={metadata.templates}
+                      themesConfig={metadata.themes}
+                    />
+                  </div>
+                </div>
+
+
               </div>
-            ))}
+            ) : (
+              <div className="h-full flex flex-col items-center justify-center p-8 glass-card">
+                <FileText size={64} className="text-gray-300 mb-4" />
+                <p className="text-gray-500 dark:text-gray-400 text-lg">Select a resume to preview</p>
+              </div>
+            )}
           </div>
-        )}
+
+        </div>
       </div>
 
-      <div className="flex justify-center gap-4 mt-6">
-        <button
-          onClick={handleDownloadPDF}
-          disabled={isDownloading}
-          className="px-6 py-2 bg-green-700 text-white rounded-lg font-semibold hover:bg-green-800 transition"
-        >
-          {isDownloading ? "Downloading..." : "Download PDF"}
-        </button>
-
-        <button
-          onClick={handleSendEmail}
-          disabled={isSending}
-          className="px-6 py-2 bg-blue-700 text-white rounded-lg font-semibold hover:bg-blue-800 transition"
-        >
-          {isSending ? "Sending..." : "Send via Email"}
-        </button>
-      </div>
-
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="colored"
-      />
+      <ToastContainer position="top-right" autoClose={3000} theme="colored" />
     </div>
   );
 };

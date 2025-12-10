@@ -29,15 +29,13 @@ const Login = () => {
       // Update global state
       window.dispatchEvent(new Event("storage"));
 
-      // ✅ Success toast with navigation after toast closes
       toast.success(res.data.message || "Login successful!", {
         position: "top-center",
-        autoClose: 2000, // 3 seconds
+        autoClose: 2000,
         theme: "colored",
-        onClose: () => navigate("/", { replace: true }), // navigate after toast closes
+        onClose: () => navigate("/", { replace: true }),
       });
     } catch (err) {
-      // ✅ Error toast
       toast.error(
         err.response?.data?.message || "Login failed! Please try again.",
         {
@@ -52,64 +50,97 @@ const Login = () => {
   };
 
   const inputClasses =
-    "w-full border rounded-lg p-3 mb-4 focus:outline-none transition-all duration-200";
+    "w-full bg-white/50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 rounded-lg p-3 pl-10 mb-4 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 text-foreground placeholder:text-gray-400";
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 px-4">
-      {/* Toast container */}
+    <div className="flex justify-center items-center min-h-screen bg-background text-foreground transition-colors duration-300 px-4 relative overflow-hidden mesh-gradient">
+
       <ToastContainer />
 
       <form
         onSubmit={handleLogin}
-        className={`bg-white shadow-xl rounded-2xl p-8 w-full max-w-md transition-all duration-300 ${
-          loading ? "opacity-75 scale-[0.98]" : "opacity-100 scale-100"
-        }`}
+        className={`glass-card p-10 w-full max-w-md backdrop-blur-xl bg-white/70 dark:bg-slate-900/60 transition-all duration-500 animate-fade-in-up ${loading ? "opacity-75 scale-[0.98]" : "opacity-100 scale-100"
+          }`}
       >
-        <h2 className="text-3xl font-bold mb-6 text-center text-gray-800 hover:text-emerald-600 transition-colors cursor-pointer">
-          <Link to="/home">Welcome Back!</Link>
-        </h2>
+        <div className="text-center mb-8">
+          <h2 className="text-4xl font-extrabold mb-2 bg-gradient-to-r from-green-500 to-emerald-600 bg-clip-text text-transparent cursor-pointer hover:scale-105 transition-transform duration-300 inline-block">
+            <Link to="/home">ResumeAI</Link>
+          </h2>
+          <p className="text-gray-600 dark:text-gray-300 text-sm">Welcome back! Please login to continue.</p>
+        </div>
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-          autoComplete="email"
-          className={`${inputClasses} border-gray-300 focus:border-green-500`}
-        />
+        <div className="space-y-4">
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg className="h-5 w-5 text-gray-400 group-focus-within:text-green-500 transition-colors duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+              </svg>
+            </div>
+            <input
+              type="email"
+              name="email"
+              placeholder="Email Address"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              autoComplete="email"
+              className={inputClasses}
+            />
+          </div>
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-          autoComplete="current-password"
-          className={`${inputClasses} border-gray-300 focus:border-green-500`}
-        />
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg className="h-5 w-5 text-gray-400 group-focus-within:text-green-500 transition-colors duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              autoComplete="current-password"
+              className={inputClasses}
+            />
+          </div>
+
+          <div className="flex justify-end mt-1">
+            <Link to="/forgot-password" className="text-sm font-semibold text-green-600 hover:text-green-500 hover:underline">
+              Forgot Password?
+            </Link>
+          </div>
+        </div>
 
         <button
           type="submit"
           disabled={loading}
-          className={`w-full p-3 rounded-lg font-semibold transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-opacity-50 ${
-            loading
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-green-600 hover:bg-green-700 text-white"
-          }`}
+          className={`w-full mt-6 p-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-green-500/30 transition-all duration-300 transform hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-green-500/30 ${loading
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-gradient-to-r from-green-500 to-emerald-600 text-white"
+            }`}
         >
-          {loading ? "Logging in..." : "Login"}
+          {loading ? (
+            <span className="flex items-center justify-center gap-2">
+              <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Logging in...
+            </span>
+          ) : (
+            "Login"
+          )}
         </button>
 
-        <div className="mt-6 text-center">
-          <span className="text-gray-600 text-sm">Don't have an account? </span>
+        <div className="mt-8 text-center animate-fade-in-up delay-200">
+          <span className="text-gray-600 dark:text-gray-400">Don't have an account? </span>
           <Link
             to="/signup"
-            className="text-green-600 hover:text-green-700 font-semibold transition-colors duration-200"
+            className="text-green-600 hover:text-green-500 font-bold hover:underline transition-all duration-200"
           >
-            Sign Up
+            Sign Up Now
           </Link>
         </div>
       </form>

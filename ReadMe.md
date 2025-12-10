@@ -1,95 +1,87 @@
+# 🚀 ResumePro - Professional Resume Builder
 
-## Project Overview
-The **Resume Builder Web Application** is a comprehensive, user-friendly platform that empowers users to create, customize, and download professional resumes. The app combines modern design templates, real-time preview, AI-powered suggestions, and advanced features like collaboration, analytics, and premium services via Razorpay payments.  
-
-It serves both individual users and teams, enabling tailored resumes, cover letters, collaborative project profiles, and career growth insights, all in a single intuitive interface.
+ResumePro is a cutting-edge web application designed to help professionals create, customize, and optimize their resumes with the power of **AI** and **Real-Time Collaboration**. Built with a modern, responsive stack, it offers a seamless experience from finding the perfect template to landing your dream job.
 
 ---
 
-## Achievements
-- Successfully implemented **real-time collaborative editing** for resumes, allowing multiple users to work simultaneously on the same document.  
-- Integrated **AI-powered suggestions** for improving resume content, skill representation, and phrasing.  
-- Developed a **premium subscription model** using Razorpay for secure one-time and recurring payments.  
-- Built a **multi-format download feature**, supporting PDF, Word, and plain text with one-click resume generation.  
-- Added **LinkedIn integration** to automatically populate user information.  
-- Implemented **version control**, allowing users to track multiple resume versions and revert changes.  
-- Designed a **comprehensive analytics dashboard** to track downloads, shares, and engagement metrics.  
-- Included a **career path analyzer**, providing personalized recommendations for skills and certifications.  
-- Created a **cover letter builder** with customizable templates and real-time preview.  
-- Developed **skill assessments** to identify user strengths and suggest resume-relevant skills.  
+## ✨ Features
+
+### 🎨 Powerful Resume Editor
+- **Real-Time Preview**: See your changes instantly as you type.
+- **Mobile Responsive**: Edit on the go with a specialized mobile editor interface.
+- **Dynamic Themes**: Choose from professionally designed templates with customizable color schemes and layouts.
+- **AI-Powered Suggestions**: Get smart content recommendations to enhance your resume impact.
+
+### 👥 Collaboration & Sharing
+- **Live Collaboration**: Work individually or invite mentors to review your resume in real-time.
+- **One-Click Sharing**: Generate a unique link to share your resume instantly with recruiters.
+- **Multi-Format Export**: Download in PDF, Word, or plain text formats.
+
+### 🌐 Comprehensive Dashboard
+- **Job Market Analytics**: View real-time trends on skills and top hiring companies.
+- **Application Tracking**: Keep tabs on your resume downloads and engagement stats.
+- **Activity Feed**: Stay motivated with a global feed of community achievements.
+
+### 💎 Premium Experience
+- **Razorpay Integration**: Secure payments for premium features.
+- **Exclusive Templates**: Access distinct, high-impact designs.
+- **Unlimited Downloads**: No restrictions for premium members.
+
+### 🌟 Modern UI/UX
+- **Dark/Light Mode**: Fully thematic interface with glassmorphism effects.
+- **Dynamic Animations**: Smooth transitions and interactive elements for a polished feel.
+- **Professional Footer**: Quick access to resources, legal info, and social connect.
 
 ---
 
-## Features
+## 🛠 Tech Stack
 
-### 1. User Registration & Authentication
-- **Account Creation**: Users can register and login to save and manage their resumes.
-- **Social Media Login**: Supports Google and LinkedIn login for seamless access.
-- **Profile Management**: Users can update their profile information anytime.
-- **JWT Authentication**: Secure API access using JSON Web Tokens.
-
-### 2. Resume Templates
-- **Template Preview**: Users can preview templates before selecting them.
-- **Customizable Design**: Change font styles, colors, and formatting to match preferences.
-
-### 3. Form Sections
-- **Personal Information**: Name, contact, summary, and social links.
-- **Work Experience**: Detailed job roles, responsibilities, and achievements.
-- **Education**: Academic history including degrees and certifications.
-- **Skills**: List technical and soft skills, with AI skill suggestions.
-- **Projects**: Highlight collaborative and individual projects, with tagging features.
-- **Certifications**: Add relevant professional certifications.
-- **Custom Sections**: Add or remove sections as per personal needs (e.g., portfolio, publications).
-
-### 4. Resume Preview & Editing
-- **Real-Time Preview**: Updates are reflected instantly as users input information.
-- **Formatting Tools**: Users can adjust styling, section order, and layout.
-- **Inline Tips**: Examples and guidance help users craft professional content.
-
-### 5. Download & Export
-- **Multiple Formats**: Download resumes in PDF, Word, or plain text formats.
-
-- **Shareable Links**: Generate links to share resumes with employers or mentors.
-- **Premium Downloads**: Free users can download a single PDF; premium users unlock unlimited downloads and additional formats.
-
-### 6. Cover Letter Builder
-- Users can create and customize cover letters to accompany resumes.
-- Templates and formatting tools are provided for professional presentation.
-
-### 7. Skill Assessment
-- Short quizzes help identify strengths and suggest relevant skills for the resume.
-- AI-powered suggestions improve skill representation in resumes.
-
-### 8. LinkedIn Integration
-- Users can import their LinkedIn profiles to populate resume fields automatically.
-- Reduces manual data entry and ensures accurate professional details.
-
-### 9. Collaboration & Tagging
-- **Project Tagging**: Tag project collaborators; tagged users get notifications.
-- **Real-Time Collaboration**: Multiple users can edit a resume simultaneously.
-- **Team Projects**: Collaborative resumes highlight contributions of each user.
-
-### 10. Advanced Features
-- **AI-Powered Suggestions**: Analyze content for better phrasing and skill highlighting.
-- **Analytics Dashboard**: Track downloads, shares, and engagement of resumes.
-- **Learning Path Generation**: Suggests online courses, workshops, and resources tailored to career goals.
-
-### 11. Payment Integration (Razorpay)
-- **Premium Features**: Users can pay to unlock unlimited resume downloads, exclusive templates, and advanced AI suggestions.
-- **Secure Payments**: Integrated Razorpay for seamless and safe transactions.
-- **Subscription Management**: Track premium membership and restrict access for free users.
-- **One-Time and Recurring Payments**: Supports both models for flexible premium options.
-
----
-
-## Tech Stack
-- **Frontend**: React.js, Tailwind CSS, HTML5, CSS3, JavaScript
+- **Frontend**: React.js, Tailwind CSS (v3), Vite, Framer Motion
 - **Backend**: Node.js, Express.js
-- **Database**: MongoDB 
-- **Authentication**: JWT Authentication with Node.js
-- **File Storage**: Local Storage or Cloud Storage (AWS S3 / DigitalOcean Spaces)
-- **AI Features**: OpenAI API (for suggestions and career path analysis)
-- **PDF Generation**: jsPDF, html2canvas
-- **Payment Gateway**: Razorpay (for premium subscriptions and features)
+- **Database**: MongoDB (Mongoose)
+- **Authentication**: JWT & Refresh Tokens
+- **Payment**: Razorpay Gateway
+- **Icons**: Lucide React
 
 ---
+
+## 🚀 Getting Started
+
+1.  **Clone the repository**:
+    ```bash
+    git clone https://github.com/your-username/resume-pro.git
+    ```
+
+2.  **Install Frontend Dependencies**:
+    ```bash
+    cd ResumeBuilder
+    npm install
+    npm run dev
+    ```
+
+3.  **Install Backend Dependencies**:
+    ```bash
+    cd ResumeBackend
+    npm install
+    npm run dev
+    ```
+
+4.  **Environment Setup**:
+    - Create `.env` in `ResumeBuilder` with `VITE_API_URL`.
+    - Create `.env` in `ResumeBackend` with `MONGO_URI`, `JWT_SECRET`, and `RAZORPAY_KEYS`.
+
+---
+
+## 📸 Screenshots
+
+*(Add your screenshots here)*
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+---
+
+**Developed with ❤️ by Your Name**

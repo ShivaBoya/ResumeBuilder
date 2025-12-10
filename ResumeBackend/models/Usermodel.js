@@ -50,8 +50,13 @@ const UserSchema = new mongoose.Schema(
     profileUrl: {
       type: String,
       trim: true,
-      default:
-        "https://www.example.com/default-profile.png", // default profile URL
+      default: "https://www.example.com/default-profile.png", // default profile URL
+    },
+    resetOtp: {
+      type: String,
+    },
+    resetOtpExpires: {
+      type: Date,
     },
   },
   { timestamps: true }

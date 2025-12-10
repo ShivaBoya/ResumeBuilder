@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import Footer from "../components/Footer";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -249,10 +250,9 @@ const Home = () => {
       setTrendingSkills((prev) =>
         prev.map((skill) => ({
           ...skill,
-          growth: `+${
-            parseInt(skill.growth.replace("%", "").replace("+", "")) +
+          growth: `+${parseInt(skill.growth.replace("%", "").replace("+", "")) +
             Math.floor(Math.random() * 3 - 1)
-          }%`,
+            }%`,
         }))
       );
 
@@ -279,7 +279,7 @@ const Home = () => {
   const features = [
     {
       title: "AI-Powered Resume Builder",
-      desc: "Create professional resumes with AI assistance and industry-specific templates that adapt to your experience.",
+      desc: "Create professional resumes with AI assistance and industry-specific templates.",
       icon: "🤖",
       gradient: "from-purple-500 via-pink-500 to-purple-600",
       stats: `${stats.templatesAvailable.toLocaleString()}+ templates`,
@@ -288,7 +288,7 @@ const Home = () => {
     },
     {
       title: "Real-Time Skill Assessment",
-      desc: "Take dynamic quizzes that adapt to your responses and discover hidden strengths with personalized recommendations.",
+      desc: "Take dynamic quizzes that adapt to your responses and discover hidden strengths.",
       icon: "⚡",
       gradient: "from-blue-500 via-cyan-500 to-blue-600",
       stats: "98.7% accuracy",
@@ -297,16 +297,16 @@ const Home = () => {
     },
     {
       title: "Live Collaboration Hub",
-      desc: "Work with mentors and peers in real-time with instant feedback, suggestions, and career guidance.",
+      desc: "Work with mentors and peers in real-time with instant feedback and guidance.",
       icon: "👥",
       gradient: "from-green-500 via-emerald-500 to-teal-600",
-      stats: `${stats.mentorsOnline.toLocaleString()}+ mentors online`,
+      stats: `${stats.mentorsOnline.toLocaleString()}+ mentors`,
       badge: "Live Now",
       badgeColor: "bg-gradient-to-r from-green-500 to-emerald-500",
     },
     {
       title: "Smart Analytics Dashboard",
-      desc: "Track resume performance with detailed insights on views, downloads, response rates, and hiring trends.",
+      desc: "Track resume performance with detailed insights on views and hiring trends.",
       icon: "📊",
       gradient: "from-orange-500 via-red-500 to-pink-600",
       stats: "Real-time insights",
@@ -315,19 +315,19 @@ const Home = () => {
     },
     {
       title: "Job Market Intelligence",
-      desc: "Access live job market data, salary insights, and trending skills to stay ahead of the competition.",
+      desc: "Access live job market data, salary insights, and trending skills.",
       icon: "🎯",
       gradient: "from-indigo-500 via-purple-500 to-pink-600",
-      stats: `${stats.jobsPosted.toLocaleString()}+ jobs tracked`,
+      stats: `${stats.jobsPosted.toLocaleString()}+ jobs`,
       badge: "Exclusive",
       badgeColor: "bg-gradient-to-r from-indigo-500 to-purple-500",
     },
     {
       title: "Interview Preparation",
-      desc: "Practice with AI-powered mock interviews and get personalized feedback to ace your next interview.",
+      desc: "Practice with AI-powered mock interviews and get personalized feedback.",
       icon: "🎤",
       gradient: "from-yellow-500 via-orange-500 to-red-600",
-      stats: `${stats.interviewsScheduled.toLocaleString()}+ interviews scheduled`,
+      stats: `${stats.interviewsScheduled.toLocaleString()}+ interviews`,
       badge: "Success Boost",
       badgeColor: "bg-gradient-to-r from-yellow-500 to-orange-500",
     },
@@ -345,14 +345,14 @@ const Home = () => {
   };
 
   const StatCard = ({ label, value, suffix = "" }) => (
-    <div className="group bg-card rounded-2xl p-6 shadow-soft hover:shadow-glow transition-all duration-500 animate-scale-in hover-scale cursor-pointer border border-border/50 hover:border-primary/20">
+    <div className="glass-card p-6 border-white/20 dark:border-white/10 group cursor-pointer hover:bg-white/50 dark:hover:bg-slate-800/50 hover:shadow-xl hover:shadow-indigo-500/10 hover:-translate-y-1 transition-all duration-300">
       <div className="flex items-center justify-between mb-3">
-        <span className="text-muted-foreground text-sm font-medium tracking-wide">
+        <span className="text-slate-700 dark:text-gray-300 text-sm font-bold tracking-wide group-hover:text-primary transition-colors">
           {label}
         </span>
-        <div className="w-2 h-2 bg-success rounded-full animate-pulse-glow"></div>
+        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.5)]"></div>
       </div>
-      <div className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+      <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent group-hover:scale-105 transition-transform origin-left">
         {typeof value === "number" ? Math.floor(value).toLocaleString() : value}
         {suffix}
       </div>
@@ -360,38 +360,35 @@ const Home = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-white via-blue-200 to-blue-200">
+    <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
       {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 animated-gradient opacity-10"></div>
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5"></div>
-        <div className="relative max-w-7xl mx-auto px-6 py-24">
-          <div className="text-center mb-20 animate-slide-down">
+      <section className="relative overflow-hidden pt-24 pb-12">
+        <div className="relative max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16 animate-fade-in-up">
             <div className="inline-block mb-6">
-              <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-gradient-primary text-primary-foreground shadow-glow animate-pulse-glow">
+              <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-200 border border-blue-200 dark:border-blue-700 backdrop-blur-sm shadow-sm">
                 🚀 Join 50,000+ professionals worldwide
               </span>
             </div>
-            <h1 className="text-6xl md:text-7xl font-bold text-foreground mb-8 leading-tight">
+            <h1 className="text-6xl md:text-7xl font-extrabold mb-8 leading-tight drop-shadow-sm text-slate-900 dark:text-white">
               Build Your Dream Career
-              <span className="block bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent text-6xl md:text-7xl animate-pulse
-">
+              <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent pb-2 mt-2">
                 In Real-Time
               </span>
             </h1>
-            <p className="text-xl text-muted-foreground max-w-4xl mx-auto mb-12 leading-relaxed">
+            <p className="text-xl text-slate-700 dark:text-gray-300 max-w-4xl mx-auto mb-12 leading-relaxed font-medium">
               Join thousands of professionals using our AI-powered platform to
-              create stunning resumes, assess skills, and land their dream jobs
-              with real-time collaboration and insights.
+              create stunning resumes, assess skills, and land their dream jobs.
             </p>
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
               <Link
                 to="/resume-builder"
-                className="group bg-gradient-primary text-primary-foreground px-10 py-5 rounded-2xl font-bold text-xl shadow-strong hover:shadow-glow transform hover-scale transition-all duration-500 animate-float hover-glow"
+                className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl text-white font-bold text-xl shadow-xl shadow-blue-500/20 hover:shadow-blue-500/40 hover:scale-105 transition-all duration-300 overflow-hidden"
               >
-                <span className="flex items-center gap-3">
+                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                <span className="relative flex items-center gap-3">
                   Start Building Now
                   <span className="group-hover:translate-x-1 transition-transform">→</span>
                 </span>
@@ -401,18 +398,16 @@ const Home = () => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <button className="group bg-card/80 backdrop-blur-sm text-foreground border-2 border-primary/20 px-10 py-5 rounded-2xl font-bold text-xl shadow-medium hover:shadow-strong transform hover-scale transition-all duration-500 hover:border-primary/40">
-                  <span className="flex items-center gap-3">
-                    <span className="text-2xl">▶️</span>
-                    Watch Demo
-                  </span>
+                <button className="glass-card px-8 py-4 rounded-2xl font-bold text-xl text-slate-800 dark:text-white hover:bg-white/60 dark:hover:bg-white/10 transition-all duration-300 flex items-center gap-3 shadow-md hover:shadow-lg">
+                  <span>▶️</span>
+                  Watch Demo
                 </button>
               </a>
             </div>
           </div>
 
           {/* Live Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-20">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-20 animate-fade-in-up delay-100">
             <StatCard label="Active Users" value={stats.activeUsers} />
             <StatCard label="Resumes Created" value={stats.resumesCreated} />
             <StatCard label="Companies Hiring" value={stats.companiesHiring} />
@@ -426,49 +421,38 @@ const Home = () => {
       </section>
 
       {/* Features Section */}
-      <section className="max-w-7xl mx-auto px-6 py-24">
-        <div className="text-center mb-20 animate-slide-up">
-          <h2 className="text-5xl font-bold text-foreground mb-6">
-            Powerful Features for Modern Professionals
-          </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Everything you need to stand out in today's competitive job market,
-            powered by cutting-edge AI and real-time collaboration.
-          </p>
-        </div>
-
+      <section className="max-w-7xl mx-auto px-6 py-12">
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
           {features.map((feature, idx) => (
             <div
               key={idx}
-              className="group bg-card rounded-3xl p-8 shadow-soft hover:shadow-glow transition-all duration-700 transform hover-scale animate-scale-in cursor-pointer border border-border/50 hover:border-primary/30 relative overflow-hidden"
+              className="glass-card p-8 group hover:scale-[1.03] hover:-translate-y-2 hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-500 border-white/20 dark:border-white/10 bg-white/40 dark:bg-slate-800/40 backdrop-blur-md"
               style={{ animationDelay: `${idx * 100}ms` }}
             >
-              <div className="absolute top-4 right-4">
-                <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold text-white ${feature.badgeColor} shadow-medium`}>
+              <div className="flex justify-between items-start mb-6">
+                <div
+                  className={`w-16 h-16 bg-gradient-to-br ${feature.gradient} rounded-2xl flex items-center justify-center text-3xl shadow-lg group-hover:shadow-xl group-hover:rotate-6 transition-all duration-300`}
+                >
+                  {feature.icon}
+                </div>
+                <span className={`px-3 py-1 rounded-full text-xs font-bold text-white ${feature.badgeColor} shadow-md`}>
                   {feature.badge}
                 </span>
               </div>
-              
-              <div
-                className={`w-20 h-20 bg-gradient-to-br ${feature.gradient} rounded-3xl flex items-center justify-center text-3xl mb-8 group-hover:scale-110 transition-transform duration-500 shadow-medium group-hover:shadow-glow`}
-              >
-                {feature.icon}
-              </div>
-              
-              <h3 className="text-2xl font-bold text-foreground mb-4 group-hover:bg-gradient-primary group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
+
+              <h3 className="text-2xl font-bold mb-4 text-slate-900 dark:text-white group-hover:text-primary transition-colors">
                 {feature.title}
               </h3>
-              
-              <p className="text-muted-foreground mb-6 leading-relaxed text-lg">
+
+              <p className="text-slate-700 dark:text-gray-300 mb-6 leading-relaxed font-medium">
                 {feature.desc}
               </p>
-              
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
+
+              <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700/50">
+                <span className="text-sm font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                   {feature.stats}
                 </span>
-                <div className="w-2 h-2 bg-success rounded-full animate-pulse-glow"></div>
+                <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse shadow-lg shadow-green-500/50"></div>
               </div>
             </div>
           ))}
@@ -476,84 +460,73 @@ const Home = () => {
       </section>
 
       {/* Real-Time Activity Feed */}
-      <section className="max-w-7xl mx-auto px-6 py-24">
+      <section className="max-w-7xl mx-auto px-6 py-12">
         {/* Live Notifications Banner */}
         {notifications.length > 0 && (
-          <div className="mb-16 animate-slide-down">
-            <div className="bg-gradient-to-r from-primary via-primary-glow to-primary text-primary-foreground p-6 rounded-3xl shadow-glow relative overflow-hidden">
-              <div className="absolute inset-0 animated-gradient opacity-20"></div>
+          <div className="mb-12 animate-fade-in-up">
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-3xl shadow-xl hover:shadow-2xl transition-shadow relative overflow-hidden group">
+              <div className="absolute inset-0 bg-white/10 animate-pulse group-hover:bg-white/20 transition-colors"></div>
               <div className="relative flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="w-4 h-4 bg-white rounded-full animate-pulse-glow"></div>
-                  <span className="font-bold text-lg">{notifications[0]}</span>
+                  <div className="w-3 h-3 bg-white rounded-full animate-pulse shadow-[0_0_10px_rgba(255,255,255,0.8)]"></div>
+                  <span className="font-bold text-lg tracking-wide">{notifications[0]}</span>
                 </div>
-                <span className="text-sm text-white/90 font-medium">Live Update</span>
+                <span className="text-sm font-bold bg-white/20 px-4 py-1.5 rounded-full backdrop-blur-sm border border-white/20">Live Update</span>
               </div>
             </div>
           </div>
         )}
 
-        <div className="grid lg:grid-cols-3 gap-16 items-start">
+        <div className="grid lg:grid-cols-3 gap-8 items-start">
           {/* Live Activity Feed */}
           <div className="lg:col-span-2">
-            <div className="animate-slide-up mb-10">
-              <h3 className="text-4xl font-bold text-foreground mb-6 flex items-center gap-4">
-                <span className="text-3xl">🌐</span>
+            <div className="mb-8">
+              <h3 className="text-3xl font-extrabold mb-4 flex items-center gap-3 text-slate-900 dark:text-white">
+                <span className="text-4xl">🌐</span>
                 {getGreeting()}, See What's Happening Live
               </h3>
-              <p className="text-xl text-muted-foreground leading-relaxed">
+              <p className="text-slate-600 dark:text-gray-400 text-lg font-medium">
                 Join a thriving community of{" "}
-                {stats.activeUsers.toLocaleString()}+ professionals achieving
-                their career goals every day. Watch real-time updates from users
-                just like you across the globe.
+                <span className="font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 px-2 py-0.5 rounded-lg">{stats.activeUsers.toLocaleString()}+</span> professionals.
               </p>
             </div>
 
-            <div className="bg-card rounded-3xl p-8 shadow-medium animate-slide-up border border-border/50">
-              <div className="flex items-center justify-between mb-8">
-                <h4 className="text-2xl font-bold text-foreground flex items-center gap-3">
-                  <span className="text-2xl">🚀</span>
+            <div className="glass-card p-6 border-white/20 dark:border-white/10 shadow-xl">
+              <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-200 dark:border-gray-700/50">
+                <h4 className="text-xl font-bold flex items-center gap-2 text-slate-900 dark:text-white">
+                  <span>🚀</span>
                   Global Activity Feed
                 </h4>
-                <div className="flex items-center gap-3">
-                  <div className="w-3 h-3 bg-success rounded-full animate-pulse-glow"></div>
-                  <span className="text-sm text-success font-bold bg-success/10 px-3 py-1 rounded-full">
-                    Live - {currentTime.toLocaleTimeString()}
-                  </span>
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse shadow-lg shadow-green-500/50"></span>
+                  <span className="text-xs font-bold text-green-600 dark:text-green-400 uppercase tracking-wider">Live</span>
                 </div>
               </div>
 
-              <div className="space-y-6 max-h-96 overflow-y-auto">
+              <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
                 {activities.map((activity, idx) => (
                   <div
                     key={`${activity.user}-${activity.time}-${idx}`}
-                    className="group flex items-start gap-6 p-6 rounded-2xl hover:bg-gradient-to-r hover:from-primary/5 hover:to-primary-glow/5 transition-all duration-500 animate-fade-in border border-transparent hover:border-primary/20 hover:shadow-soft cursor-pointer"
+                    className="flex items-start gap-4 p-4 rounded-xl bg-white/60 dark:bg-slate-800/60 hover:bg-white dark:hover:bg-slate-700 hover:shadow-md transition-all animate-fade-in-up border border-transparent hover:border-blue-200 dark:hover:border-blue-700/50"
                     style={{ animationDelay: `${idx * 100}ms` }}
                   >
-                    <div className="text-3xl group-hover:scale-110 transition-transform duration-300">{activity.avatar}</div>
+                    <div className="text-2xl pt-1 scale-110">{activity.avatar}</div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-3 mb-2">
-                        <span className="text-xl group-hover:scale-110 transition-transform duration-300">
-                          {getActivityIcon(activity.type)}
-                        </span>
-                        <span className="font-bold text-foreground text-lg">
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
+                        <span className="font-bold text-slate-900 dark:text-white">
                           {activity.user}
                         </span>
-                        <span className="text-xs bg-muted text-muted-foreground px-3 py-1 rounded-full font-medium">
+                        <span className="text-xs font-bold bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-2.5 py-1 rounded-full border border-slate-200 dark:border-slate-600">
                           {activity.location}
                         </span>
+                        <span className="text-slate-500 dark:text-slate-400 text-sm ml-auto font-medium">{activity.time}</span>
                       </div>
-                      <p className="text-muted-foreground mb-3 text-lg">
+                      <p className="text-slate-700 dark:text-gray-300 text-sm mb-2 font-medium">
                         {activity.action}
                       </p>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground font-medium">
-                          {activity.time}
-                        </span>
-                        <div className="flex items-center gap-2">
-                          <div className="w-2 h-2 bg-success rounded-full animate-pulse-glow"></div>
-                          <span className="text-sm text-success font-bold">Active</span>
-                        </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">{getActivityIcon(activity.type)}</span>
+                        <span className="text-xs font-bold text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 px-2 py-0.5 rounded-full">Successfully completed</span>
                       </div>
                     </div>
                   </div>
@@ -562,300 +535,54 @@ const Home = () => {
             </div>
           </div>
 
-          {/* Live Stats Sidebar */}
+          {/* Sidebar */}
           <div className="space-y-8">
-            {/* Quick Stats */}
-            <div className="bg-card rounded-3xl p-8 shadow-medium animate-scale-in border border-border/50">
-              <h4 className="text-xl font-bold text-foreground mb-6 flex items-center gap-3">
-                <span className="text-xl">📊</span>
-                Live Platform Stats
-              </h4>
-              <div className="space-y-6">
-                <div className="flex justify-between items-center p-3 rounded-xl hover:bg-muted/50 transition-colors cursor-pointer">
-                  <span className="text-muted-foreground font-medium">
-                    Templates Used
-                  </span>
-                  <span className="font-bold text-primary text-lg">
-                    {stats.templatesAvailable.toLocaleString()}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center p-3 rounded-xl hover:bg-muted/50 transition-colors cursor-pointer">
-                  <span className="text-muted-foreground font-medium">
-                    Mentors Online
-                  </span>
-                  <div className="flex items-center gap-3">
-                    <div className="w-3 h-3 bg-success rounded-full animate-pulse-glow"></div>
-                    <span className="font-bold text-success text-lg">
-                      {stats.mentorsOnline.toLocaleString()}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex justify-between items-center p-3 rounded-xl hover:bg-muted/50 transition-colors cursor-pointer">
-                  <span className="text-muted-foreground font-medium">
-                    Jobs Posted Today
-                  </span>
-                  <span className="font-bold text-primary text-lg">
-                    {stats.jobsPosted.toLocaleString()}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center p-3 rounded-xl hover:bg-muted/50 transition-colors cursor-pointer">
-                  <span className="text-muted-foreground font-medium">
-                    Interviews This Week
-                  </span>
-                  <span className="font-bold text-primary text-lg">
-                    {stats.interviewsScheduled.toLocaleString()}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Success Indicators */}
-            <div className="bg-gradient-to-br from-success/10 via-success/5 to-transparent rounded-3xl p-8 shadow-medium animate-scale-in border border-success/20">
-              <h4 className="text-xl font-bold text-success mb-6 flex items-center gap-3">
-                <span className="text-xl">🎯</span>
-                Success Indicators
-              </h4>
-              <div className="space-y-4">
-                <div className="flex items-center gap-4 p-3 rounded-xl hover:bg-success/5 transition-colors cursor-pointer">
-                  <div className="w-4 h-4 bg-success rounded-full animate-pulse-glow"></div>
-                  <span className="text-success font-bold">
-                    {stats.successRate.toFixed(1)}% Interview Success Rate
-                  </span>
-                </div>
-                <div className="flex items-center gap-4 p-3 rounded-xl hover:bg-success/5 transition-colors cursor-pointer">
-                  <div
-                    className="w-4 h-4 bg-success rounded-full animate-pulse-glow"
-                    style={{ animationDelay: "0.5s" }}
-                  ></div>
-                  <span className="text-success font-bold">
-                    97.2% User Satisfaction
-                  </span>
-                </div>
-                <div className="flex items-center gap-4 p-3 rounded-xl hover:bg-success/5 transition-colors cursor-pointer">
-                  <div
-                    className="w-4 h-4 bg-success rounded-full animate-pulse-glow"
-                    style={{ animationDelay: "1s" }}
-                  ></div>
-                  <span className="text-success font-bold">
-                    4.9⭐ Average Rating
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Trending Skills Section */}
-      <section className="bg-gradient-to-br from-muted/30 via-transparent to-accent/10 py-24">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-20 animate-slide-up">
-            <h2 className="text-5xl font-bold text-foreground mb-6 flex items-center justify-center gap-4">
-              <span className="text-4xl">🔥</span>
-              Trending Skills & Market Intelligence
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-4xl mx-auto">
-              Stay ahead of the curve with real-time skill demand data and
-              market insights powered by AI analysis of millions of job
-              postings.
-            </p>
-          </div>
-
-          <div className="grid lg:grid-cols-3 gap-12">
             {/* Trending Skills */}
-            <div className="lg:col-span-2">
-              <div className="bg-card rounded-3xl p-8 shadow-medium animate-scale-in border border-border/50">
-                <h3 className="text-2xl font-bold text-foreground mb-8 flex items-center gap-3">
-                  <span className="text-2xl">📈</span>
-                  Hottest Skills This Week
-                </h3>
-                <div className="grid md:grid-cols-2 gap-6">
-                  {trendingSkills.map((skill, idx) => (
-                    <div
-                      key={skill.skill}
-                      className="group p-6 rounded-2xl bg-gradient-to-br from-card to-muted/20 border border-border/50 hover:border-primary/30 transition-all duration-500 cursor-pointer transform hover-scale hover:shadow-soft"
-                      style={{ animationDelay: `${idx * 150}ms` }}
-                    >
-                      <div className="flex items-center justify-between mb-4">
-                        <div
-                          className={`w-6 h-6 rounded-full bg-gradient-to-r ${skill.gradient} shadow-medium`}
-                        ></div>
-                        <span className="text-sm font-bold text-success bg-success/10 px-3 py-1 rounded-full">
-                          {skill.growth}
-                        </span>
-                      </div>
-                      <h4 className="font-bold text-foreground mb-2 text-lg group-hover:bg-gradient-primary group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
-                        {skill.skill}
-                      </h4>
-                      <div className="flex items-center gap-3">
-                        <span className="text-sm text-muted-foreground font-medium">
-                          Demand:
-                        </span>
-                        <span
-                          className={`text-xs font-bold px-3 py-1 rounded-full ${
-                            skill.demand === "Very High"
-                              ? "bg-destructive/10 text-destructive"
-                              : skill.demand === "High"
-                              ? "bg-warning/10 text-warning"
-                              : "bg-muted text-muted-foreground"
-                          }`}
-                        >
-                          {skill.demand}
-                        </span>
-                      </div>
+            <div className="glass-card p-6 border-white/20 dark:border-white/10 shadow-lg">
+              <h3 className="text-xl font-bold mb-6 flex items-center gap-2 text-slate-900 dark:text-white">
+                <span>📈</span>
+                Trending Skills
+              </h3>
+              <div className="space-y-4">
+                {trendingSkills.slice(0, 4).map((skill, idx) => (
+                  <div
+                    key={skill.skill}
+                    className="p-4 rounded-xl bg-white/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-700 transition-all cursor-pointer border border-transparent hover:border-purple-200 dark:hover:border-purple-700/50 hover:shadow-md group"
+                  >
+                    <div className="flex justify-between items-center mb-2">
+                      <h4 className="font-bold text-sm text-slate-800 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">{skill.skill}</h4>
+                      <span className="text-xs font-bold text-green-600 bg-green-100 dark:bg-green-900/30 px-2.5 py-1 rounded-full">{skill.growth}</span>
                     </div>
-                  ))}
-                </div>
+                    <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2 mt-2 overflow-hidden">
+                      <div className={`h-full rounded-full bg-gradient-to-r ${skill.gradient} shadow-[0_0_10px_rgba(168,85,247,0.4)]`} style={{ width: '85%' }}></div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
 
             {/* Market Summary */}
-            <div className="space-y-8">
-              <div className="bg-card rounded-3xl p-8 shadow-medium animate-scale-in border border-border/50">
-                <h3 className="text-xl font-bold text-foreground mb-6 flex items-center gap-3">
-                  <span className="text-xl">🌟</span>
-                  Market Summary
-                </h3>
-                <div className="space-y-6">
-                  <div className="p-4 bg-gradient-to-br from-primary/10 to-primary-glow/5 rounded-2xl border border-primary/20">
-                    <div className="text-sm text-primary font-bold mb-1">
-                      Most In-Demand
-                    </div>
-                    <div className="text-lg font-bold text-foreground">
-                      AI & Machine Learning
-                    </div>
-                  </div>
-                  <div className="p-4 bg-gradient-to-br from-success/10 to-success/5 rounded-2xl border border-success/20">
-                    <div className="text-sm text-success font-bold mb-1">
-                      Highest Growth
-                    </div>
-                    <div className="text-lg font-bold text-foreground">
-                      Data Analysis
-                    </div>
-                  </div>
-                  <div className="p-4 bg-gradient-to-br from-warning/10 to-warning/5 rounded-2xl border border-warning/20">
-                    <div className="text-sm text-warning font-bold mb-1">
-                      Emerging Field
-                    </div>
-                    <div className="text-lg font-bold text-foreground">
-                      DevOps Engineering
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-gradient-to-br from-warning/20 via-warning/10 to-warning/5 rounded-3xl p-8 shadow-medium animate-scale-in border border-warning/30">
-                <h3 className="text-xl font-bold text-foreground mb-4 flex items-center gap-3">
-                  <span className="text-xl">⚡</span>
-                  Quick Action
-                </h3>
-                <p className="text-muted-foreground mb-6 leading-relaxed">
-                  Start learning AI skills now and increase your job prospects
-                  by 45%!
-                </p>
-                <button
-                  onClick={() => navigate("/ai")}
-                  className="w-full bg-gradient-to-r from-warning to-warning/80 text-warning-foreground py-4 px-6 rounded-2xl font-bold transform hover-scale transition-all duration-300 hover:shadow-glow"
-                >
-                  Start AI Assessment
-                </button>
-              </div>
+            <div className="glass-card p-6 border-white/20 dark:border-white/10 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/10 dark:to-orange-900/10 shadow-lg">
+              <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-slate-900 dark:text-white">
+                <span>⚡</span>
+                Quick Action
+              </h3>
+              <p className="text-sm text-slate-700 dark:text-gray-300 mb-6 font-medium">
+                Boost your profile visibility by adding verified skills.
+              </p>
+              <button
+                onClick={() => navigate("/ai")}
+                className="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white py-3.5 px-6 rounded-xl font-bold shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40 hover:-translate-y-1 transition-all duration-300"
+              >
+                Take Skill Quiz
+              </button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Job Market Intelligence */}
-      <section className="max-w-7xl mx-auto px-6 py-24">
-        <div className="text-center mb-20 animate-slide-up">
-          <h2 className="text-5xl font-bold text-foreground mb-6 flex items-center justify-center gap-4">
-            <span className="text-4xl">💼</span>
-            Live Job Market Intelligence
-          </h2>
-          <p className="text-xl text-muted-foreground max-w-4xl mx-auto">
-            Real-time insights from top companies actively hiring. Updated every
-            minute with fresh opportunities and hiring trends.
-          </p>
-        </div>
-
-        <div className="grid lg:grid-cols-2 gap-8">
-          {jobMarketData.map((company, idx) => (
-            <div
-              key={company.company}
-              className="group bg-card rounded-3xl p-8 shadow-soft hover:shadow-glow transition-all duration-700 animate-scale-in cursor-pointer transform hover-scale border border-border/50 hover:border-primary/30 relative overflow-hidden"
-              style={{ animationDelay: `${idx * 100}ms` }}
-            >
-              <div className="absolute top-6 right-6">
-                <div
-                  className={`px-4 py-2 rounded-full text-sm font-bold text-white shadow-medium ${
-                    company.hiring === "Rapidly"
-                      ? "bg-gradient-to-r from-destructive to-destructive/80"
-                      : company.hiring === "Actively"
-                      ? "bg-gradient-to-r from-success to-success/80"
-                      : "bg-gradient-to-r from-warning to-warning/80"
-                  }`}
-                >
-                  {company.hiring}
-                </div>
-              </div>
-              
-              <div className="flex items-start gap-6 mb-6">
-                <div className={`text-5xl p-4 rounded-2xl bg-gradient-to-br ${company.gradient} shadow-medium group-hover:scale-110 transition-all duration-500`}>
-                  {company.logo}
-                </div>
-                <div>
-                  <h3 className="text-2xl font-bold text-foreground group-hover:bg-gradient-primary group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
-                    {company.company}
-                  </h3>
-                  <p className="text-muted-foreground font-medium text-lg">
-                    {company.type}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div>
-                  <span className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-                    {company.openings.toLocaleString()}
-                  </span>
-                  <span className="text-muted-foreground ml-3 text-lg">
-                    open positions
-                  </span>
-                </div>
-                <button className="bg-gradient-primary text-primary-foreground px-6 py-3 rounded-2xl font-bold hover:shadow-glow transform hover-scale transition-all duration-300">
-                  View Jobs
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Final CTA Section */}
-      <section className="bg-gradient-secondary py-24 relative overflow-hidden">
-        <div className="absolute inset-0 animated-gradient opacity-20"></div>
-        <div className="relative max-w-5xl mx-auto text-center px-6 animate-scale-in">
-          <h3 className="text-5xl font-bold text-foreground mb-8">
-            Ready to Transform Your Career?
-          </h3>
-          <p className="text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed">
-            Join thousands of professionals who have already accelerated their
-            careers with our AI-powered platform and real-time collaboration
-            tools.
-          </p>
-
-          <Link
-            to="/resume-builder"
-            className="inline-block bg-card/90 backdrop-blur-sm text-foreground px-12 py-6 rounded-3xl font-bold text-2xl shadow-strong hover:shadow-glow transform hover-scale transition-all duration-500 animate-float hover-glow border-2 border-primary/20 hover:border-primary/40"
-          >
-            Get Started Free Today
-          </Link>
-
-          <p className="text-muted-foreground text-lg mt-6">
-            No credit card required • Start building in under 60 seconds
-          </p>
-        </div>
-      </section>
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };

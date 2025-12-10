@@ -1,729 +1,357 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import Preview from "./Preview";
+import ResumeRenderer from "../components/Renderer/ResumeRenderer";
+import { Save, Eye, Edit2, Plus, ArrowLeft, Grid } from "lucide-react";
+import { BASE_URL } from "../utils/contants";
 
-const BASE_URL = "https://fullstackbakend-8.onrender.com";
-const generateId = () =>
-  `${Date.now()}-${Math.floor(Math.random() * 1000000)}`;
+// DnD Kit
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { SortableItem } from "../components/Editor/SortableItem";
+import SectionEditor from "../components/Editor/SectionEditor";
+import AddContentModal from "../components/Editor/AddContentModal";
+import * as Icons from "lucide-react";
+
+// Helper to resolve icon string to component
+const getIcon = (name) => Icons[name] || Icons.FileText;
 
 const ResumeBuilder = () => {
   const navigate = useNavigate();
-  const [resumeData, setResumeData] = useState({
-    personalInfo: {
-      name: "",
-      email: "",
-      phone: "",
-      address: "",
-      linkedin: "",
-      github: "",
-    },
-    workExperience: [
-      {
-        id: generateId(),
-        company: "",
-        position: "",
-        startDate: "",
-        endDate: "",
-        description: "",
-      },
-    ],
-    education: [
-      {
-        id: generateId(),
-        institution: "",
-        degree: "",
-        startDate: "",
-        endDate: "",
-        grade: "",
-      },
-    ],
-    skills: [""],
-    certifications: [{ id: generateId(), name: "", issuer: "", year: "" }],
-    projects: [
-      {
-        id: generateId(),
-        title: "",
-        description: "",
-        techStack: [""],
-        githubLink: "",
-        collaborators: [],
-      },
-    ],
-    coverLetter: { title: "", content: "" },
-    theme: { font: "Arial", color: "#000000", layout: "classic" },
+  const { id } = useParams();
+
+  // UI State
+  const [activeTab, setActiveTab] = useState("edit");
+  const [activeSectionId, setActiveSectionId] = useState("personal");
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // Metadata State
+  const [metadata, setMetadata] = useState({
+    sections: {},
+    templates: {},
+    themes: {}
   });
 
-  const [isExisting, setIsExisting] = useState(false);
-  const token = localStorage.getItem("accessToken");
-  const refreshToken = localStorage.getItem("refreshToken");
+  // Resume Data State
+  const [resume, setResume] = useState({
+    templateId: "modern",
+    themeId: "blue",
+    meta: { title: "Untitled Resume" },
+    sectionsOrder: ["personal"],
+    sectionsData: { personal: {} }
+  });
 
-  // Fetch existing resume
+  const token = localStorage.getItem("accessToken");
+
+  // Sensors for DnD
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor)
+  );
+
+  // 1. Fetch Metadata & Resume
   useEffect(() => {
-    const fetchResume = async () => {
+    const fetchData = async () => {
       try {
-        const res = await axios.get(`${BASE_URL}/resume/getresume`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            RefreshToken: refreshToken,
-          },
+        // Parallel fetch
+        const [sectionsRes, templatesRes, themesRes] = await Promise.all([
+          axios.get(`${BASE_URL}/users/config/sections`, { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get(`${BASE_URL}/users/config/templates`, { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get(`${BASE_URL}/users/config/themes`, { headers: { Authorization: `Bearer ${token}` } })
+        ]);
+
+        setMetadata({
+          sections: sectionsRes.data || {},
+          templates: templatesRes.data || {},
+          themes: themesRes.data || {}
         });
 
-        if (res.data?.resume) {
-          const data = res.data.resume;
+        if (id) {
+          const res = await axios.get(`${BASE_URL}/Resume/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+          if (res.data?.resume) {
+            // Normalize Legacy Data
+            let normalizedSections = { ...(res.data.resume.sectionsData || prev.sectionsData) };
 
-          // Re-map to ensure IDs for React rendering
-          data.workExperience = (data.workExperience || []).map((w) => ({
-            ...w,
-            id: generateId(),
-          }));
-          data.education = (data.education || []).map((e) => ({
-            ...e,
-            id: generateId(),
-          }));
-          data.certifications = (data.certifications || []).map((c) => ({
-            ...c,
-            id: generateId(),
-          }));
-          data.projects = (data.projects || []).map((p) => ({
-            ...p,
-            id: generateId(),
-          }));
-          data.skills = data.skills || [];
+            // Fix Skills: Convert Object { "Frontend": ["React"] } -> Array [{ category: "Frontend", skillName: ["React"] }]
+            if (normalizedSections.skills && !Array.isArray(normalizedSections.skills) && typeof normalizedSections.skills === 'object') {
+              normalizedSections.skills = Object.entries(normalizedSections.skills).map(([category, skills]) => ({
+                id: Date.now() + Math.random(),
+                category,
+                skillName: Array.isArray(skills) ? skills : [skills]
+              }));
+            }
 
-          setResumeData(data);
-          setIsExisting(true);
+            setResume(prev => ({
+              ...prev,
+              ...res.data.resume,
+              sectionsData: normalizedSections,
+              sectionsOrder: res.data.resume.sectionsOrder || prev.sectionsOrder
+            }));
+          }
+        } else {
+          // Check LocalStorage for draft if creating new
+          const savedDraft = localStorage.getItem("resumeDraft");
+          if (savedDraft) {
+            try {
+              const parsed = JSON.parse(savedDraft);
+              setResume(parsed);
+              toast.info("Restored your unsaved draft");
+            } catch (e) {
+              console.error("Draft parse error", e);
+            }
+          }
         }
       } catch (err) {
-        console.log("ℹ️ No existing resume found, creating new.", err.message);
+        console.error(err);
+        if (!id) toast.info("Started new resume");
+        else toast.error("Failed to load data");
+      } finally {
+        setLoading(false);
       }
     };
-    if (token) fetchResume();
-  }, [token, refreshToken]);
+    fetchData();
+  }, [id, token]);
 
-  // Generic change handler
-  const handleChange = (
-    section,
-    field,
-    value,
-    id = null,
-    nestedIndex = null
-  ) => {
-    setResumeData((prev) => {
-      if (Array.isArray(prev[section]) && id) {
-        const updated = prev[section].map((item) =>
-          item.id === id
-            ? nestedIndex !== null
-              ? {
-                  ...item,
-                  [field]: item[field].map((v, idx) =>
-                    idx === nestedIndex ? value : v
-                  ),
-                }
-              : { ...item, [field]: value }
-            : item
-        );
-        return { ...prev, [section]: updated };
-      } else if (section === "skills") {
-        const updatedSkills = [...prev.skills];
-        if (id !== null) updatedSkills[id] = value;
-        return { ...prev, skills: updatedSkills };
-      } else {
-        return { ...prev, [section]: { ...prev[section], [field]: value } };
+  // Auto-Save Draft to LocalStorage
+  useEffect(() => {
+    if (!loading && !id) { // Only auto-save local draft if not editing a saved DB resume (avoid overwriting server data logic locally purely)
+      // Actually, safer to always save draft as backup
+      localStorage.setItem("resumeDraft", JSON.stringify(resume));
+    }
+  }, [resume, loading, id]);
+
+
+  // Handlers
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+    if (active.id !== over.id) {
+      setResume((prev) => {
+        const oldIndex = prev.sectionsOrder.indexOf(active.id);
+        const newIndex = prev.sectionsOrder.indexOf(over.id);
+        return {
+          ...prev,
+          sectionsOrder: arrayMove(prev.sectionsOrder, oldIndex, newIndex),
+        };
+      });
+    }
+  };
+
+  const handleAddSection = (sectionId) => {
+    if (!resume.sectionsOrder.includes(sectionId)) {
+      setResume(prev => ({
+        ...prev,
+        sectionsOrder: [...prev.sectionsOrder, sectionId],
+        sectionsData: {
+          ...prev.sectionsData,
+          [sectionId]: prev.sectionsData[sectionId] || (metadata.sections[sectionId]?.repeatable ? [] : {})
+        }
+      }));
+      setActiveSectionId(sectionId);
+      toast.success("Section added");
+    } else {
+      // If repeatable and already exists, we might want to allow multiples in future or just scroll to it
+      setActiveSectionId(sectionId);
+      toast.info("Section already exists");
+    }
+  };
+
+  const handleRemoveSection = (sectionId) => {
+    if (confirm("Remove this section from your resume? Data will be preserved in background.")) {
+      setResume(prev => ({
+        ...prev,
+        sectionsOrder: prev.sectionsOrder.filter(id => id !== sectionId)
+      }));
+      if (activeSectionId === sectionId) setActiveSectionId('personal');
+    }
+  };
+
+  const handleDataChange = (newData) => {
+    setResume(prev => ({
+      ...prev,
+      sectionsData: {
+        ...prev.sectionsData,
+        [activeSectionId]: newData
       }
-    });
-  };
-
-  // Add/remove handlers
-  const handleAdd = (section, newItem) => {
-    setResumeData((prev) => ({
-      ...prev,
-      [section]: [...prev[section], { id: generateId(), ...newItem }],
     }));
   };
 
-  const handleRemove = (section, id) => {
-    setResumeData((prev) => ({
-      ...prev,
-      [section]: prev[section].filter((item) => item.id !== id),
-    }));
-  };
-
-  const handleAddSkill = () =>
-    setResumeData((prev) => ({ ...prev, skills: [...prev.skills, ""] }));
-
-  const handleRemoveSkill = (idx) =>
-    setResumeData((prev) => {
-      const s = [...prev.skills];
-      s.splice(idx, 1);
-      return { ...prev, skills: s };
-    });
-
-  // Submit resume
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSave = async () => {
     try {
-      const payload = {
-        ...resumeData,
-        workExperience: resumeData.workExperience.map(
-          ({ id, ...rest }) => rest
-        ),
-        education: resumeData.education.map(({ id, ...rest }) => rest),
-        certifications: resumeData.certifications.map(
-          ({ id, ...rest }) => rest
-        ),
-        projects: resumeData.projects.map(({ id, ...rest }) => rest),
-      };
-
-      const url = isExisting
-        ? `${BASE_URL}/resume/update`
-        : `${BASE_URL}/resume/create`;
-      const method = isExisting ? "put" : "post";
-
-      await axios({
-        method,
-        url,
-        data: payload,
-        headers: {
-          Authorization: `Bearer ${token}`,
-          RefreshToken: refreshToken,
-        },
-      });
-
-      toast.success("✅ Resume saved successfully!");
-      setIsExisting(true);
-      navigate("/my-resumes");
+      const url = id ? `${BASE_URL}/Resume/update/${id}` : `${BASE_URL}/Resume/create`;
+      const method = id ? "put" : "post";
+      const res = await axios({ method, url, data: resume, headers: { Authorization: `Bearer ${token}` } });
+      toast.success("Saved!");
+      if (!id && res.data.resume?._id) navigate(`/resume-builder/${res.data.resume._id}`, { replace: true });
     } catch (err) {
-      console.error("❌ Error saving resume:", err);
-      toast.error(err.response?.data?.message || "Failed to save resume");
+      console.error(err);
+      toast.error("Save failed");
     }
   };
 
-  // Send email
-  const handleSendEmail = async () => {
-    try {
-      await axios.get(`${BASE_URL}/resume/send`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          RefreshToken: refreshToken,
-        },
-      });
-      toast.success("📧 Resume sent via email successfully!");
-    } catch (err) {
-      console.error("❌ Error sending resume email:", err);
-      toast.error(err.response?.data?.message || "Failed to send email");
-    }
-  };
+  if (loading) return <div className="min-h-screen flex items-center justify-center animate-pulse">Loading Engine...</div>;
 
-  // Delete resume
-  const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete your resume?")) return;
-    try {
-      await axios.delete(`${BASE_URL}/resume/delete`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          RefreshToken: refreshToken,
-        },
-      });
-      toast.success("🗑️ Resume deleted!");
-      setIsExisting(false);
-      window.location.reload();
-    } catch (err) {
-      console.error("❌ Error deleting resume:", err);
-      toast.error(err.response?.data?.message || "Failed to delete resume");
-    }
-  };
+  // Derived State
+  const activeSchema = metadata.sections[activeSectionId];
+  const availableSectionsList = Object.values(metadata.sections);
+
+  const templatesList = Object.values(metadata.templates);
+  const themesList = Object.values(metadata.themes);
 
   return (
-    <div className="max-w-7xl mx-auto p-4">
-      <div className="flex gap-6">
-        {/* Left: Form */}
-        <form onSubmit={handleSubmit} className="w-full lg:w-1/2 space-y-6">
-          {/* Personal Info */}
-          <div className="border p-4 rounded bg-blue-50">
-            <h2 className="font-bold text-lg mb-2">Personal Information</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {Object.entries(resumeData.personalInfo).map(([key, value]) => (
-                <div key={key}>
-                  <label className="block mb-1 capitalize">{key}</label>
-                  <input
-                    type={key === "email" ? "email" : "text"}
-                    placeholder={`Enter ${key}`}
-                    value={value || ""}
-                    onChange={(e) =>
-                      handleChange("personalInfo", key, e.target.value)
-                    }
-                    className="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-gray-100 flex flex-col h-screen overflow-hidden font-sans">
 
-          {/* Work Experience */}
-          <div className="border p-4 rounded bg-green-50">
-            <h2 className="font-bold text-lg mb-2">Work Experience</h2>
-            {resumeData.workExperience.map((exp) => (
-              <div key={exp.id} className="mb-4 p-2 border rounded space-y-2">
-                <input
-                  placeholder="Company"
-                  value={exp.company}
-                  onChange={(e) =>
-                    handleChange(
-                      "workExperience",
-                      "company",
-                      e.target.value,
-                      exp.id
-                    )
-                  }
-                  className="w-full px-2 py-1 border rounded focus:ring-2 focus:ring-green-500"
-                />
-                <input
-                  placeholder="Position"
-                  value={exp.position}
-                  onChange={(e) =>
-                    handleChange(
-                      "workExperience",
-                      "position",
-                      e.target.value,
-                      exp.id
-                    )
-                  }
-                  className="w-full px-2 py-1 border rounded focus:ring-2 focus:ring-green-500"
-                />
-                <div className="flex flex-col md:flex-row gap-2">
-                  <input
-                    type="date"
-                    value={exp.startDate}
-                    onChange={(e) =>
-                      handleChange(
-                        "workExperience",
-                        "startDate",
-                        e.target.value,
-                        exp.id
-                      )
-                    }
-                    className="px-2 py-1 border rounded focus:ring-2 focus:ring-green-500 w-full"
-                  />
-                  <input
-                    type="date"
-                    value={exp.endDate}
-                    onChange={(e) =>
-                      handleChange(
-                        "workExperience",
-                        "endDate",
-                        e.target.value,
-                        exp.id
-                      )
-                    }
-                    className="px-2 py-1 border rounded focus:ring-2 focus:ring-green-500 w-full"
-                  />
-                </div>
-                <textarea
-                  placeholder="Description"
-                  value={exp.description}
-                  onChange={(e) =>
-                    handleChange(
-                      "workExperience",
-                      "description",
-                      e.target.value,
-                      exp.id
-                    )
-                  }
-                  className="w-full px-2 py-1 border rounded focus:ring-2 focus:ring-green-500"
-                  rows={3}
-                />
-                {resumeData.workExperience.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => handleRemove("workExperience", exp.id)}
-                    className="text-red-600"
-                  >
-                    Remove
-                  </button>
-                )}
-              </div>
-            ))}
-            <button
-              type="button"
-              onClick={() =>
-                handleAdd("workExperience", {
-                  company: "",
-                  position: "",
-                  startDate: "",
-                  endDate: "",
-                  description: "",
-                })
-              }
-              className="px-4 py-2 border rounded bg-green-100 text-green-700"
-            >
-              Add Work Experience
-            </button>
-          </div>
-          {/* Education */}
-          <div className="border p-4 rounded bg-purple-50">
-            <h2 className="font-bold text-lg mb-2">Education</h2>
-            {resumeData.education.map((ed) => (
-              <div key={ed.id} className="mb-4 p-2 border rounded space-y-2">
-                <input
-                  placeholder="Institution"
-                  value={ed.institution}
-                  onChange={(e) =>
-                    handleChange(
-                      "education",
-                      "institution",
-                      e.target.value,
-                      ed.id
-                    )
-                  }
-                  className="w-full px-2 py-1 border rounded"
-                />
-                <input
-                  placeholder="Degree"
-                  value={ed.degree}
-                  onChange={(e) =>
-                    handleChange("education", "degree", e.target.value, ed.id)
-                  }
-                  className="w-full px-2 py-1 border rounded"
-                />
-                <div className="flex gap-2">
-                  <input
-                    type="date"
-                    value={ed.startDate}
-                    onChange={(e) =>
-                      handleChange(
-                        "education",
-                        "startDate",
-                        e.target.value,
-                        ed.id
-                      )
-                    }
-                    className="px-2 py-1 border rounded"
-                  />
-                  <input
-                    type="date"
-                    value={ed.endDate}
-                    onChange={(e) =>
-                      handleChange(
-                        "education",
-                        "endDate",
-                        e.target.value,
-                        ed.id
-                      )
-                    }
-                    className="px-2 py-1 border rounded"
-                  />
-                </div>
-                <input
-                  placeholder="Grade"
-                  value={ed.grade}
-                  onChange={(e) =>
-                    handleChange("education", "grade", e.target.value, ed.id)
-                  }
-                  className="w-full px-2 py-1 border rounded"
-                />
-                {resumeData.education.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => handleRemove("education", ed.id)}
-                    className="text-red-600"
-                  >
-                    Remove
-                  </button>
-                )}
-              </div>
-            ))}
-            <button
-              type="button"
-              onClick={() =>
-                handleAdd("education", {
-                  institution: "",
-                  degree: "",
-                  startDate: "",
-                  endDate: "",
-                  grade: "",
-                })
-              }
-              className="px-4 py-2 border rounded bg-purple-100 text-purple-700"
-            >
-              Add Education
-            </button>
-          </div>
+      <AddContentModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        availableSections={availableSectionsList}
+        onAdd={handleAddSection}
+        usedSectionIds={resume.sectionsOrder}
+      />
 
-          {/* Skills */}
-          <div className="border p-4 rounded bg-yellow-50">
-            <h2 className="font-bold text-lg mb-2">Skills</h2>
-            {resumeData.skills.map((s, idx) => (
-              <div key={idx} className="flex gap-2 mb-2">
-                <input
-                  placeholder="Skill"
-                  value={s}
-                  onChange={(e) =>
-                    handleChange("skills", null, e.target.value, idx)
-                  }
-                  className="w-full px-2 py-1 border rounded"
-                />
-                {resumeData.skills.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveSkill(idx)}
-                    className="text-red-600"
-                  >
-                    Remove
-                  </button>
-                )}
-              </div>
-            ))}
-            <button
-              type="button"
-              onClick={handleAddSkill}
-              className="px-4 py-2 border rounded bg-yellow-100 text-yellow-700"
-            >
-              Add Skill
-            </button>
-          </div>
+      {/* Top Toolbar */}
+      <header className="h-16 bg-white dark:bg-slate-800 border-b dark:border-slate-700 flex items-center px-4 justify-between shrink-0 z-20 shadow-sm relative">
+        <div className="flex items-center gap-4">
+          <button onClick={() => navigate('/home')} className="p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-full transition-colors"><ArrowLeft size={20} /></button>
+          <input
+            value={resume.meta.title}
+            onChange={e => setResume(p => ({ ...p, meta: { ...p.meta, title: e.target.value } }))}
+            className="bg-transparent font-bold text-lg outline-none w-40 md:w-64 placeholder-gray-400"
+            placeholder="Resume Title"
+          />
+        </div>
 
-          {/* Certifications */}
-          <div className="border p-4 rounded bg-indigo-50">
-            <h2 className="font-bold text-lg mb-2">Certifications</h2>
-            {resumeData.certifications.map((cert) => (
-              <div key={cert.id} className="mb-4 p-2 border rounded space-y-2">
-                <input
-                  placeholder="Name"
-                  value={cert.name}
-                  onChange={(e) =>
-                    handleChange(
-                      "certifications",
-                      "name",
-                      e.target.value,
-                      cert.id
-                    )
-                  }
-                  className="w-full px-2 py-1 border rounded"
-                />
-                <input
-                  placeholder="Issuer"
-                  value={cert.issuer}
-                  onChange={(e) =>
-                    handleChange(
-                      "certifications",
-                      "issuer",
-                      e.target.value,
-                      cert.id
-                    )
-                  }
-                  className="w-full px-2 py-1 border rounded"
-                />
-                <input
-                  placeholder="Year"
-                  value={cert.year}
-                  onChange={(e) =>
-                    handleChange(
-                      "certifications",
-                      "year",
-                      e.target.value,
-                      cert.id
-                    )
-                  }
-                  className="w-full px-2 py-1 border rounded"
-                />
-                {resumeData.certifications.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => handleRemove("certifications", cert.id)}
-                    className="text-red-600"
-                  >
-                    Remove
-                  </button>
-                )}
-              </div>
-            ))}
-            <button
-              type="button"
-              onClick={() =>
-                handleAdd("certifications", { name: "", issuer: "", year: "" })
-              }
-              className="px-4 py-2 border rounded bg-indigo-100 text-indigo-700"
-            >
-              Add Certification
-            </button>
-          </div>
-
-          {/* Projects */}
-          <div className="border p-4 rounded bg-pink-50">
-            <h2 className="font-bold text-lg mb-2">Projects</h2>
-            {resumeData.projects.map((proj) => (
-              <div key={proj.id} className="mb-4 p-2 border rounded space-y-2">
-                <input
-                  placeholder="Title"
-                  value={proj.title}
-                  onChange={(e) =>
-                    handleChange("projects", "title", e.target.value, proj.id)
-                  }
-                  className="w-full px-2 py-1 border rounded"
-                />
-                <textarea
-                  placeholder="Description"
-                  value={proj.description}
-                  onChange={(e) =>
-                    handleChange(
-                      "projects",
-                      "description",
-                      e.target.value,
-                      proj.id
-                    )
-                  }
-                  className="w-full px-2 py-1 border rounded"
-                  rows={2}
-                />
-                <input
-                  placeholder="Tech Stack (comma separated)"
-                  value={proj.techStack.join(",")}
-                  onChange={(e) =>
-                    handleChange(
-                      "projects",
-                      "techStack",
-                      e.target.value.split(","),
-                      proj.id
-                    )
-                  }
-                  className="w-full px-2 py-1 border rounded"
-                />
-                <input
-                  placeholder="Github Link"
-                  value={proj.githubLink}
-                  onChange={(e) =>
-                    handleChange(
-                      "projects",
-                      "githubLink",
-                      e.target.value,
-                      proj.id
-                    )
-                  }
-                  className="w-full px-2 py-1 border rounded"
-                />
-                {resumeData.projects.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => handleRemove("projects", proj.id)}
-                    className="text-red-600"
-                  >
-                    Remove
-                  </button>
-                )}
-              </div>
-            ))}
-            <button
-              type="button"
-              onClick={() =>
-                handleAdd("projects", {
-                  title: "",
-                  description: "",
-                  techStack: [""],
-                  githubLink: "",
-                  collaborators: [],
-                })
-              }
-              className="px-4 py-2 border rounded bg-pink-100 text-pink-700"
-            >
-              Add Project
-            </button>
-          </div>
-
-          {/* Cover Letter */}
-          <div className="border p-4 rounded bg-gray-50">
-            <h2 className="font-bold text-lg mb-2">Cover Letter</h2>
-            <input
-              placeholder="Title"
-              value={resumeData.coverLetter.title}
-              onChange={(e) =>
-                handleChange("coverLetter", "title", e.target.value)
-              }
-              className="w-full px-2 py-1 border rounded mb-2"
-            />
-            <textarea
-              placeholder="Content"
-              value={resumeData.coverLetter.content}
-              onChange={(e) =>
-                handleChange("coverLetter", "content", e.target.value)
-              }
-              className="w-full px-2 py-1 border rounded"
-              rows={4}
-            />
-          </div>
-
-          {/* Theme */}
-          <div className="border p-4 rounded bg-gray-100">
-            <h2 className="font-bold text-lg mb-2">Theme</h2>
-            <input
-              placeholder="Font"
-              value={resumeData.theme.font}
-              onChange={(e) => handleChange("theme", "font", e.target.value)}
-              className="w-full px-2 py-1 border rounded mb-2"
-            />
-            <input
-              type="color"
-              value={resumeData.theme.color}
-              onChange={(e) => handleChange("theme", "color", e.target.value)}
-              className="w-full h-10 mb-2"
-            />
+        <div className="flex items-center gap-4">
+          {/* Template Selector */}
+          <div className="hidden md:flex items-center gap-2 bg-gray-100 dark:bg-slate-700 rounded-lg p-1">
             <select
-              value={resumeData.theme.layout}
-              onChange={(e) => handleChange("theme", "layout", e.target.value)}
-              className="w-full px-2 py-1 border rounded"
+              value={resume.templateId}
+              onChange={e => setResume(p => ({ ...p, templateId: e.target.value }))}
+              className="bg-transparent text-sm font-medium outline-none cursor-pointer px-2"
             >
-              <option value="classic">Classic</option>
-              <option value="modern">Modern</option>
-              <option value="creative">Creative</option>
+              {templatesList.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
             </select>
           </div>
 
-          {/* Submit Buttons */}
-          <div className="flex gap-4 mt-6">
+          {/* Theme Selector */}
+          <div className="hidden md:flex gap-1">
+            {themesList.slice(0, 5).map(t => (
+              <button
+                key={t.id}
+                onClick={() => setResume(p => ({ ...p, themeId: t.id }))}
+                className={`w-6 h-6 rounded-full border-2 transition-transform ${resume.themeId === t.id ? 'border-blue-500 scale-110' : 'border-transparent hover:scale-105'}`}
+                style={{ backgroundColor: t.vars?.['--primary'] || '#000' }}
+                title={t.label}
+              />
+            ))}
+          </div>
+
+          <button onClick={handleSave} className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full text-sm font-bold flex items-center gap-2 shadow-lg hover:shadow-blue-500/20 transition-all">
+            <Save size={16} /> <span className="hidden sm:inline">Save</span>
+          </button>
+        </div>
+      </header>
+
+      <div className="flex flex-1 overflow-hidden">
+
+        {/* 1. Sidebar: Section List (Sortable) */}
+        <aside className={`w-80 bg-white dark:bg-slate-800/50 border-r dark:border-slate-700 flex flex-col z-10 transition-transform ${activeTab === 'preview' ? '-translate-x-full absolute lg:relative lg:translate-x-0' : 'translate-x-0'}`}>
+
+          <div className="p-4 border-b dark:border-slate-700 flex justify-between items-center">
+            <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Structure</h2>
             <button
-              type="submit"
-              className="px-6 py-2 bg-blue-600 text-white rounded"
+              onClick={() => setIsAddModalOpen(true)}
+              className="text-blue-600 dark:text-blue-400 text-xs font-bold hover:underline flex items-center gap-1"
             >
-              {isExisting ? "Update Resume" : "Save Resume"}
+              <Plus size={14} /> Add Section
             </button>
-            {isExisting && (
-              <>
-                <button
-                  type="button"
-                  onClick={handleSendEmail}
-                  className="px-6 py-2 bg-green-600 text-white rounded"
-                >
-                  Send via Email
-                </button>
-                <button
-                  type="button"
-                  onClick={handleDelete}
-                  className="px-6 py-2 bg-red-600 text-white rounded"
-                >
-                  Delete Resume
-                </button>
-              </>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+              <SortableContext items={resume.sectionsOrder} strategy={verticalListSortingStrategy}>
+                <div className="space-y-2">
+                  {resume.sectionsOrder.map(secId => {
+                    const config = metadata.sections[secId];
+                    if (!config) return null; // Logic to handle missing config if any
+                    return (
+                      <SortableItem
+                        key={secId}
+                        id={secId}
+                        label={config.label}
+                        icon={getIcon(config.icon)}
+                        isActive={activeSectionId === secId}
+                        onClick={() => setActiveSectionId(secId)}
+                        onDelete={config.repeatable ? () => handleRemoveSection(secId) : undefined}
+                      />
+                    );
+                  })}
+                </div>
+              </SortableContext>
+            </DndContext>
+
+            <button
+              onClick={() => setIsAddModalOpen(true)}
+              className="w-full mt-4 py-3 border-2 border-dashed border-gray-200 dark:border-slate-700 rounded-xl text-gray-400 hover:border-blue-400 hover:text-blue-500 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
+            >
+              <Grid size={16} /> Add Content
+            </button>
+          </div>
+        </aside>
+
+        {/* 2. Middle: Content Editor */}
+        <main className={`flex-1 bg-gray-50 dark:bg-slate-900 overflow-y-auto relative custom-scrollbar flex flex-col ${activeTab === 'preview' ? 'hidden lg:flex' : 'flex'}`}>
+          <div className="flex-1 max-w-3xl w-full mx-auto py-8 px-6">
+            {activeSchema ? (
+              <div className="bg-white dark:bg-slate-800 shadow-sm border dark:border-slate-700 rounded-2xl min-h-[500px]">
+                <SectionEditor
+                  sectionId={activeSectionId}
+                  schema={activeSchema}
+                  data={resume.sectionsData[activeSectionId]}
+                  onChange={handleDataChange}
+                />
+              </div>
+            ) : (
+              <div className="h-full flex flex-col items-center justify-center text-gray-400">
+                <p>Select a section to edit</p>
+              </div>
             )}
           </div>
-        </form>
+        </main>
 
-        {/* Right: Live Preview */}
-        <div className="w-full lg:w-1/2 lg:sticky lg:top-24 h-fit mt-6 lg:mt-0">
-          <div className="bg-white rounded-xl shadow-2xl border p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-bold text-gray-800">Live Preview</h3>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-red-400 rounded-full"></div>
-                <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
-                <div className="w-3 h-3 bg-green-400 rounded-full"></div>
-              </div>
-            </div>
-            <div className="max-h-[600px] overflow-y-auto">
-              <Preview resumeData={resumeData} />
+        {/* 3. Right: Live Preview */}
+        <aside className={`w-[45%] bg-zinc-200 dark:bg-zinc-950 border-l dark:border-slate-700 relative overflow-hidden flex flex-col ${activeTab === 'edit' ? 'hidden lg:flex' : 'flex'}`}>
+          <div className="p-3 bg-white dark:bg-slate-800 border-b dark:border-slate-700 flex justify-between items-center text-xs px-4 shadow-sm z-10">
+            <span className="font-bold opacity-60">Live Preview</span>
+            <div className="flex gap-3">
+              <button className="hover:text-blue-600 transition-colors font-medium">PDF</button>
+              <button className="hover:text-blue-600 transition-colors font-medium" onClick={() => window.print()}>Print</button>
             </div>
           </div>
+          <div className="flex-1 overflow-y-auto p-8 flex justify-center custom-scrollbar">
+            <div className="resume-scale-wrapper transform origin-top w-full max-w-[210mm] shadow-2xl transition-all duration-300">
+              <ResumeRenderer
+                templateId={resume.templateId}
+                themeId={resume.themeId}
+                data={resume}
+                templatesConfig={metadata.templates}
+                themesConfig={metadata.themes}
+              />
+            </div>
+          </div>
+        </aside>
+
+        {/* Mobile Tab Switcher */}
+        <div className="fixed bottom-6 right-6 lg:hidden z-50">
+          <button
+            onClick={() => setActiveTab(activeTab === 'edit' ? 'preview' : 'edit')}
+            className="bg-blue-600 text-white p-4 rounded-full shadow-2xl hover:bg-blue-700 transition"
+          >
+            {activeTab === 'edit' ? <Eye /> : <Edit2 />}
+          </button>
         </div>
+
       </div>
     </div>
   );

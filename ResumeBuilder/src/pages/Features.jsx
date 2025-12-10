@@ -125,12 +125,14 @@ const featuresData = [
 ];
 
 const FeatureCard = ({ icon: Icon, title, description }) => (
-  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 flex flex-col space-y-3 hover:scale-105 transform transition-all duration-300">
+  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl p-6 flex flex-col space-y-3 hover:scale-105 transform transition-all duration-300 border border-transparent hover:border-blue-500/20">
     <div className="flex items-center space-x-3">
-      <Icon className="h-8 w-8 text-blue-500" />
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{title}</h3>
+      <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+        <Icon className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+      </div>
+      <h3 className="text-lg font-bold text-slate-900 dark:text-white">{title}</h3>
     </div>
-    <p className="text-gray-600 dark:text-gray-300 text-sm">{description}</p>
+    <p className="text-slate-700 dark:text-gray-300 text-sm font-medium leading-relaxed">{description}</p>
   </div>
 );
 
