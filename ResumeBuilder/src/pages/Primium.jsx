@@ -1,5 +1,6 @@
 import axios from "axios";
 import React from "react";
+import { BASE_URL } from "../utils/contants";
 
 export default function Premium() {
   const handleBuyClick = async (type) => {
@@ -14,7 +15,7 @@ export default function Premium() {
 
       // Create payment order
       const response = await axios.post(
-        "https://fullstackbakend-8.onrender.com/paymentcreate",
+        `${BASE_URL}/paymentcreate`,
         { membershipType: type },
         {
           headers: {
@@ -64,7 +65,7 @@ export default function Premium() {
     {
       type: "silver",
       title: "Silver Membership",
-      price: "$9.99/mo",
+      price: "₹1/mo",
       color: "from-pink-500 to-rose-600",
       icon: "🥈",
       features: [
@@ -79,7 +80,7 @@ export default function Premium() {
     {
       type: "gold",
       title: "Gold Membership",
-      price: "$19.99/mo",
+      price: "₹2/mo",
       color: "from-indigo-500 to-purple-600",
       icon: "👑",
       features: [
@@ -92,6 +93,22 @@ export default function Premium() {
         "Cover Letter Generator",
       ],
       popular: true,
+    },
+    {
+      type: "diamond",
+      title: "Diamond Membership",
+      price: "₹3/mo",
+      color: "from-emerald-500 to-teal-600",
+      icon: "💎",
+      features: [
+        "Everything in Gold",
+        "Resume Writing Service",
+        "Dedicated Career Coach",
+        "Interview Preparation Docs",
+        "Lifetime Validity",
+        "1-on-1 Consultation",
+      ],
+      popular: false,
     },
   ];
 
