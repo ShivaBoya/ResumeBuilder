@@ -1,8 +1,10 @@
 import axios from "axios";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../utils/contants";
 
 export default function Premium() {
+  const navigate = useNavigate();
   const handleBuyClick = async (type) => {
     try {
       const accessToken = localStorage.getItem("accessToken");
@@ -54,8 +56,14 @@ export default function Premium() {
       rzp.open();
     } catch (err) {
       console.error("Payment error:", err.response?.data || err);
+      if (err.response && (err.response.status === 401 || err.response.status === 403)) {
+        alert("Session expired. Please login again.");
+        localStorage.clear();
+        navigate("/login");
+        return;
+      }
       alert(
-        err.response?.data?.error || "Failed to initiate payment. Try again!"
+        err.response?.data?.error || err.response?.data?.message || "Failed to initiate payment. Try again!"
       );
     }
   };

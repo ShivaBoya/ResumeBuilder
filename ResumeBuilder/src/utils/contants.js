@@ -1,1 +1,1 @@
-export const BASE_URL = "https://fullstackbakend-9.onrender.com"
+export const BASE_URL = "https://fullstackbakend-10.onrender.com"
