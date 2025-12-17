@@ -27,6 +27,11 @@ import AI from "./pages/Ai";
 import Templates from "./pages/Template";
 import Profile from "./pages/Profile";
 import ForgotPassword from "./pages/ForgotPassword";
+import TermsAndConditions from "./pages/TermsAndConditions";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import ShippingPolicy from "./pages/ShippingPolicy";
+import ContactUs from "./pages/ContactUs";
+import CancellationRefund from "./pages/CancellationRefund";
 
 // ✅ PrivateRoute wrapper
 function PrivateRoute({ children, redirectTo = "/login" }) {
@@ -80,6 +85,13 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+
+            {/* Public Pages */}
+            <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/shipping-policy" element={<ShippingPolicy />} />
+            <Route path="/contact-us" element={<ContactUs />} />
+            <Route path="/cancellation-refund" element={<CancellationRefund />} />
 
             {/* Protected Routes */}
             <Route

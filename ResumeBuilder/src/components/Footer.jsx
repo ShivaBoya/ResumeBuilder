@@ -36,9 +36,11 @@ const Footer = () => {
             title: "Company",
             links: [
                 { name: "About Us", path: "#" },
-                { name: "Contact", path: "#" },
-                { name: "Privacy Policy", path: "#" },
-                { name: "Terms of Service", path: "#" },
+                { name: "Contact Us", path: "/contact-us" },
+                { name: "Privacy Policy", path: "/privacy-policy" },
+                { name: "Terms of Service", path: "/terms-and-conditions" },
+                { name: "Shipping Policy", path: "/shipping-policy" },
+                { name: "Cancellation & Refund", path: "/cancellation-refund" },
             ]
         }
     ];
@@ -104,11 +106,11 @@ const Footer = () => {
                     <div className="flex items-center gap-6 text-sm text-gray-500">
                         <div className="flex items-center gap-2">
                             <Mail size={14} />
-                            <span>support@resumepro.com</span>
+                            <span>shivasiddu80@gmail.com</span>
                         </div>
                         <div className="flex items-center gap-2">
                             <MapPin size={14} />
-                            <span>San Francisco, CA</span>
+                            <span>Kurnool, Andhra Pradesh, India</span>
                         </div>
                     </div>
                 </div>
