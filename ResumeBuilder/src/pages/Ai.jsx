@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
+import axios from "axios";
+import { BASE_URL } from "../utils/contants";
 import {
   MessageSquare,
   Brain,
@@ -18,6 +20,7 @@ const Ai = () => {
   const [activeTab, setActiveTab] = useState("chat");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showSkillModal, setShowSkillModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Chat State
   const [messages, setMessages] = useState([
@@ -36,7 +39,7 @@ const Ai = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
 
     const userMsg = {
@@ -48,24 +51,57 @@ const Ai = () => {
 
     setMessages(prev => [...prev, userMsg]);
     setInputValue("");
+    setIsLoading(true);
 
-    // Simulate AI response
-    setTimeout(() => {
-      let response = "That's a great question! Based on current market trends...";
+    try {
+      const token = localStorage.getItem("accessToken");
+      const refreshToken = localStorage.getItem("refreshToken");
 
-      if (userMsg.content.toLowerCase().includes("resume")) {
-        response = "To improve your resume, focus on quantifiable achievements. Instead of 'Managed team', try 'Led a team of 5 developers to deliver project X ahead of schedule'.";
-      } else if (userMsg.content.toLowerCase().includes("skill")) {
-        response = "For your profile, I recommend adding cloud skills like AWS or Azure, as they are in high demand.";
+      if (!token) {
+        setMessages(prev => [...prev, {
+          id: Date.now().toString(),
+          type: "assistant",
+          content: "Please log in to use the AI Assistant.",
+          timestamp: new Date()
+        }]);
+        setIsLoading(false);
+        return;
       }
+
+      const res = await axios.post(
+        `${BASE_URL}/ai/chat`,
+        { message: userMsg.content },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            RefreshToken: `Bearer ${refreshToken}`
+          }
+        }
+      );
+
+      const aiResponse = res.data.response;
 
       setMessages(prev => [...prev, {
         id: (Date.now() + 1).toString(),
         type: "assistant",
-        content: response,
+        content: aiResponse,
         timestamp: new Date()
       }]);
-    }, 1500);
+    } catch (error) {
+      console.error("AI Chat Error:", error);
+      const errorMessage = error.response?.status === 401
+        ? "Session expired. Please log in again."
+        : "Sorry, I encountered an error. Please try again.";
+
+      setMessages(prev => [...prev, {
+        id: (Date.now() + 1).toString(),
+        type: "assistant",
+        content: errorMessage,
+        timestamp: new Date()
+      }]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleKeyPress = (e) => {
@@ -99,6 +135,20 @@ const Ai = () => {
                   </div>
                 </div>
               ))}
+              {isLoading && (
+                <div className="flex gap-4">
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 bg-gradient-to-br from-indigo-500 to-purple-500">
+                    <Bot size={20} className="text-white" />
+                  </div>
+                  <div className="max-w-[80%] p-4 rounded-2xl shadow-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-gray-200 rounded-tl-none border border-gray-100 dark:border-slate-700">
+                    <div className="flex space-x-2">
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                    </div>
+                  </div>
+                </div>
+              )}
               <div ref={messagesEndRef} />
             </div>
 
@@ -114,7 +164,7 @@ const Ai = () => {
                 />
                 <button
                   onClick={handleSendMessage}
-                  disabled={!inputValue.trim()}
+                  disabled={!inputValue.trim() || isLoading}
                   className="absolute right-2 p-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Send size={20} />
